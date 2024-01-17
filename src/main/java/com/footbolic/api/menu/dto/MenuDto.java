@@ -12,18 +12,14 @@ import java.util.List;
 @Schema(name = "Menu 객체")
 @Data
 @Builder
-@Setter
-@Getter
 public class MenuDto {
 
     private String id;
 
     private String parentId;
 
-    private MenuEntity parent;
-
     @Builder.Default
-    private List<MenuEntity> menus = new ArrayList<>();
+    private List<MenuDto> children = new ArrayList<>();
 
     private String title;
 
@@ -47,8 +43,7 @@ public class MenuDto {
         return MenuEntity.builder()
                 .id(id)
                 .parentId(parentId)
-                .parent(parent)
-                .menus(menus)
+                .children(children.stream().map(MenuDto::toEntity).toList())
                 .title(title)
                 .path(path)
                 .iconCodeId(iconCodeId)
