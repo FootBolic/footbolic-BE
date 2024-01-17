@@ -11,6 +11,7 @@ import java.util.List;
 
 @Getter
 @SuperBuilder
+@NoArgsConstructor
 @Entity(name = "MenuEntity")
 @Table(name = "Menu")
 public class MenuEntity extends ExtendedBaseEntity {
@@ -18,13 +19,10 @@ public class MenuEntity extends ExtendedBaseEntity {
     @Column(name = "parent_id", length = 30)
     private String parentId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id", insertable = false, updatable = false)
-    private MenuEntity parent;
-
     @Builder.Default
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
-    private List<MenuEntity> menus = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "parent_id", insertable = false, updatable = false)
+    private List<MenuEntity> children = new ArrayList<>();
 
     @Column(name = "title", nullable = false, length = 20)
     private String title;
@@ -39,8 +37,7 @@ public class MenuEntity extends ExtendedBaseEntity {
         return MenuDto.builder()
                 .id(getId())
                 .parentId(parentId)
-                .parent(parent)
-                .menus(menus)
+                .children(children.stream().map(MenuEntity::toDto).toList())
                 .title(title)
                 .path(path)
                 .iconCodeId(iconCodeId)

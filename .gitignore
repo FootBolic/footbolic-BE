@@ -18,6 +18,8 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
+/usr/footbolic/logs/
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

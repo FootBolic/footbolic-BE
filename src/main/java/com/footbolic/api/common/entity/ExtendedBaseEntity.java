@@ -2,11 +2,15 @@ package com.footbolic.api.common.entity;
 
 import com.footbolic.api.member.entity.MemberEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @SuperBuilder
 @MappedSuperclass
