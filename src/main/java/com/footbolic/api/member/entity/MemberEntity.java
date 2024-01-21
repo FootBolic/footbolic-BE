@@ -1,6 +1,7 @@
 package com.footbolic.api.member.entity;
 
 import com.footbolic.api.common.entity.BaseEntity;
+import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.notification.entity.NotificationEntity;
 import com.footbolic.api.role.entity.RoleEntity;
 import jakarta.persistence.*;
@@ -36,5 +37,18 @@ public class MemberEntity extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<NotificationEntity> notifications = new ArrayList<>();
+
+    public MemberDto toDto() {
+        return MemberDto.builder()
+                .id(getId())
+                .roleId(roleId)
+                .role(role == null ? null : role.toDto())
+                .fullName(fullName)
+                .nickname(nickname)
+                .refreshToken(refreshToken)
+                .createdAt(getCreatedAt())
+                .updatedAt(getUpdatedAt())
+                .build();
+    }
 
 }

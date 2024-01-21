@@ -25,14 +25,14 @@ public class MenuController {
 
     private final MenuService menuService;
 
-    @Operation(summary = "메뉴 목록 조회", description = "메뉴 목록을 page 단위로 조회")
+    @Operation(summary = "메뉴 목록 조회", description = "메뉴 목록을 트리 형태로 조회")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public SuccessResponse getMenuList() {
         return new SuccessResponse(menuService.findAllMenus());
     }
 
-    @Operation(summary = "메뉴 생성", description = "파라미터로 전달받은 메뉴를 생성")
+    @Operation(summary = "메뉴 생성", description = "파라미터로 전달 받은 메뉴를 생성")
     @Parameter(name = "menu", description = "생성할 메뉴 객체", required = true)
     @PostMapping
     public ResponseEntity<BaseResponse> createMenu(
@@ -42,7 +42,7 @@ public class MenuController {
         return ResponseEntity.ok(new SuccessResponse(createdMenu));
     }
 
-    @Operation(summary = "메뉴 단건 조회", description = "제공된 식별번호를 가진 메뉴 조회")
+    @Operation(summary = "메뉴 단건 조회", description = "전달 받은 식별번호를 가진 메뉴 조회")
     @Parameter(name = "id", description = "메뉴 식별번호", required = true)
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse> getMenu(
@@ -65,7 +65,7 @@ public class MenuController {
         }
     }
 
-    @Operation(summary = "메뉴 수정", description = "파라미터로 전달받은 메뉴를 수정")
+    @Operation(summary = "메뉴 수정", description = "파라미터로 전달 받은 메뉴를 수정")
     @Parameter(name = "menu", description = "수정할 메뉴 객체", required = true)
     @PatchMapping
     public ResponseEntity<BaseResponse> updateMenu(
