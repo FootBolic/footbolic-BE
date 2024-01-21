@@ -4,11 +4,9 @@ import com.footbolic.api.menu.dto.MenuDto;
 import com.footbolic.api.menu.entity.MenuEntity;
 import com.footbolic.api.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

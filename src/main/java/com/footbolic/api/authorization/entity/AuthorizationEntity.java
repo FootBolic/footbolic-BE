@@ -1,7 +1,8 @@
 package com.footbolic.api.authorization.entity;
 
+import com.footbolic.api.authorization.dto.AuthorizationDto;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
-import com.footbolic.api.member.entity.MemberEntity;
+import com.footbolic.api.menu.entity.MenuEntity;
 import com.footbolic.api.role.entity.RoleEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -28,6 +29,23 @@ public class AuthorizationEntity extends ExtendedBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", insertable = false, updatable = false)
-    private MemberEntity menu;
+    private MenuEntity menu;
+
+    public AuthorizationDto toDto() {
+        return AuthorizationDto.builder()
+                .id(getId())
+                .title(title)
+                .roleId(roleId)
+                .role(role == null ? null : role.toDto())
+                .menuId(menuId)
+                .menu(menu == null ? null : menu.toDto())
+                .createdAt(getCreatedAt())
+                .createMemberId(getCreateMemberId())
+                .createdBy(getCreatedBy())
+                .updatedAt(getUpdatedAt())
+                .updateMemberId(getUpdateMemberId())
+                .updatedBy(getUpdatedBy())
+                .build();
+    }
 
 }
