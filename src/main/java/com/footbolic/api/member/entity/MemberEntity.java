@@ -1,5 +1,6 @@
 package com.footbolic.api.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.footbolic.api.common.entity.BaseEntity;
 import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.notification.entity.NotificationEntity;
@@ -7,6 +8,7 @@ import com.footbolic.api.role.entity.RoleEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Getter
 @SuperBuilder
+@NoArgsConstructor
 @Entity(name = "MemberEntity")
 @Table(name = "Member")
 public class MemberEntity extends BaseEntity {
@@ -21,6 +24,7 @@ public class MemberEntity extends BaseEntity {
     @Column(name = "role_id", nullable = false, length = 30)
     private String roleId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", insertable = false, updatable = false)
     private RoleEntity role;
@@ -38,7 +42,7 @@ public class MemberEntity extends BaseEntity {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<NotificationEntity> notifications = new ArrayList<>();
 
-    public MemberDto toDto() {
+    public MemberDto toDto() {System.out.println(">>>>>>>>>MemberEntity toDto");
         return MemberDto.builder()
                 .id(getId())
                 .roleId(roleId)
