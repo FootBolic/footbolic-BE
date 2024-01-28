@@ -1,5 +1,6 @@
 package com.footbolic.api.role.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.footbolic.api.authorization.entity.AuthorizationEntity;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
 import com.footbolic.api.member.entity.MemberEntity;
@@ -24,19 +25,19 @@ public class RoleEntity extends ExtendedBaseEntity {
     private String title;
 
     @Builder.Default
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    @Transient
     private List<MemberEntity> members = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    @Transient
     private List<AuthorizationEntity> authorizations = new ArrayList<>();
 
     public RoleDto toDto() {
         return RoleDto.builder()
                 .id(getId())
                 .title(title)
-                .members(members == null ? null : members.stream().map(MemberEntity::toDto).toList())
-                .authorizations(authorizations == null ? null : authorizations.stream().map(AuthorizationEntity::toDto).toList())
+                .members(members.stream().map(MemberEntity::toDto).toList())
+                .authorizations(authorizations.stream().map(AuthorizationEntity::toDto).toList())
                 .createdAt(getCreatedAt())
                 .createMemberId(getCreateMemberId())
                 .createdBy(getCreatedBy())
