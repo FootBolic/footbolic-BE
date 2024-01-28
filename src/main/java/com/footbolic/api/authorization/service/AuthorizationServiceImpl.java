@@ -1,0 +1,44 @@
+package com.footbolic.api.authorization.service;
+
+import com.footbolic.api.authorization.repository.AuthorizationRepository;
+import com.footbolic.api.authorization.dto.AuthorizationDto;
+import com.footbolic.api.authorization.entity.AuthorizationEntity;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class AuthorizationServiceImpl implements AuthorizationService {
+
+    private final AuthorizationRepository authorizationRepository;
+
+    @Override
+    public List<AuthorizationDto> findAllAuthorizations(Pageable pageable) {
+        return authorizationRepository.findAll(pageable).stream().map(AuthorizationEntity::toDto).toList();
+    }
+
+    @Override
+    public AuthorizationDto findById(String id) {
+        return authorizationRepository.findById(id).map(AuthorizationEntity::toDto).orElse(null);
+    }
+
+    @Override
+    public AuthorizationDto saveAuthorization(AuthorizationDto role) {
+        AuthorizationEntity createdAuthorization = authorizationRepository.save(role.toEntity());
+        return createdAuthorization.toDto();
+    }
+
+    @Override
+    public void deleteAuthorization(String id) {
+        authorizationRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsById(String id) {
+        return authorizationRepository.existsById(id);
+    }
+
+}

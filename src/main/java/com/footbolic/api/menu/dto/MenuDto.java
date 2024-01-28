@@ -43,7 +43,7 @@ public class MenuDto {
         return MenuEntity.builder()
                 .id(id)
                 .parentId(parentId)
-                .children(children.stream().map(MenuDto::toEntity).toList())
+                .children(children == null ? null : children.stream().map(MenuDto::toEntity).toList())
                 .title(title)
                 .path(path)
                 .iconCodeId(iconCodeId)

@@ -37,7 +37,7 @@ public class MenuEntity extends ExtendedBaseEntity {
         return MenuDto.builder()
                 .id(getId())
                 .parentId(parentId)
-                .children(children.stream().map(MenuEntity::toDto).toList())
+                .children(children == null ? null : children.stream().map(MenuEntity::toDto).toList())
                 .title(title)
                 .path(path)
                 .iconCodeId(iconCodeId)

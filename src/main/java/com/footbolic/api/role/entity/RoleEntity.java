@@ -1,6 +1,5 @@
 package com.footbolic.api.role.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.footbolic.api.authorization.entity.AuthorizationEntity;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
 import com.footbolic.api.member.entity.MemberEntity;
