@@ -42,7 +42,7 @@ public class MemberEntity extends BaseEntity {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<NotificationEntity> notifications = new ArrayList<>();
 
-    public MemberDto toDto() {System.out.println(">>>>>>>>>MemberEntity toDto");
+    public MemberDto toDto() {
         return MemberDto.builder()
                 .id(getId())
                 .roleId(roleId)

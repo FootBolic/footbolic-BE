@@ -24,22 +24,20 @@ public class RoleEntity extends ExtendedBaseEntity {
     @Column(name = "title", nullable = false, length = 20)
     private String title;
 
-    @JsonIgnore
     @Builder.Default
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    @Transient
     private List<MemberEntity> members = new ArrayList<>();
 
-    @JsonIgnore
     @Builder.Default
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    @Transient
     private List<AuthorizationEntity> authorizations = new ArrayList<>();
 
-    public RoleDto toDto() {System.out.println(">>>>>>>>>RoleEntity toDto");
+    public RoleDto toDto() {
         return RoleDto.builder()
                 .id(getId())
                 .title(title)
-                .members(members == null ? null : members.stream().map(MemberEntity::toDto).toList())
-                .authorizations(authorizations == null ? null : authorizations.stream().map(AuthorizationEntity::toDto).toList())
+                .members(members.stream().map(MemberEntity::toDto).toList())
+                .authorizations(authorizations.stream().map(AuthorizationEntity::toDto).toList())
                 .createdAt(getCreatedAt())
                 .createMemberId(getCreateMemberId())
                 .createdBy(getCreatedBy())
