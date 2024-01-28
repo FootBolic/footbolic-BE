@@ -6,10 +6,12 @@ import com.footbolic.api.menu.entity.MenuEntity;
 import com.footbolic.api.role.entity.RoleEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
+@NoArgsConstructor
 @Entity(name = "AuthorizationEntity")
 @Table(name = "Authorization")
 public class AuthorizationEntity extends ExtendedBaseEntity {
