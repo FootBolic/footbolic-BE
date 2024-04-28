@@ -8,4 +8,6 @@ public interface MenuRepositoryCustom {
 
     List<MenuEntity> findAllMenus();
 
+    List<MenuEntity> findUsedMenus();
+
 }

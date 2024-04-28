@@ -9,6 +9,8 @@ public interface MenuService {
 
     List<MenuDto> findAllMenus();
 
+    List<MenuDto> findUsedMenus();
+
     MenuDto findById(String id);
 
     MenuDto saveMenu(MenuDto menu);
