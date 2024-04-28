@@ -1,5 +1,6 @@
 package com.footbolic.api.menu.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.footbolic.api.member.entity.MemberEntity;
 import com.footbolic.api.menu.entity.MenuEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,6 +28,9 @@ public class MenuDto {
 
     private String iconCodeId;
 
+    @JsonProperty("isUsed")
+    private boolean isUsed;
+
     private LocalDateTime createdAt;
 
     private String createMemberId;
@@ -47,6 +51,7 @@ public class MenuDto {
                 .title(title)
                 .path(path)
                 .iconCodeId(iconCodeId)
+                .isUsed(isUsed)
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)
                 .createdBy(createdBy)

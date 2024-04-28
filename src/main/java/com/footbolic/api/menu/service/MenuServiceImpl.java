@@ -20,6 +20,11 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    public List<MenuDto> findUsedMenus() {
+        return menuRepository.findUsedMenus().stream().map(MenuEntity::toDto).toList();
+    }
+
+    @Override
     public MenuDto findById(String id) {
         return menuRepository.findById(id).map(MenuEntity::toDto).orElse(null);
     }

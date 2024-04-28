@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +27,14 @@ public class MenuController {
     @Operation(summary = "메뉴 목록 조회", description = "메뉴 목록을 트리 형태로 조회")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public SuccessResponse getMenuList() {
-        return new SuccessResponse(menuService.findAllMenus());
+    public SuccessResponse getMenuList(
+            @RequestParam(required = false) Boolean isUsed
+    ) {
+        if (isUsed != null && isUsed) {
+            return new SuccessResponse(menuService.findUsedMenus());
+        } else {
+            return new SuccessResponse(menuService.findAllMenus());
+        }
     }
 
     @Operation(summary = "메뉴 생성", description = "파라미터로 전달 받은 메뉴를 생성")

@@ -1,10 +1,12 @@
 package com.footbolic.api.menu.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
 import com.footbolic.api.menu.dto.MenuDto;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,7 @@ public class MenuEntity extends ExtendedBaseEntity {
     private String parentId;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "parent_id", insertable = false, updatable = false)
     private List<MenuEntity> children = new ArrayList<>();
 
@@ -33,6 +35,10 @@ public class MenuEntity extends ExtendedBaseEntity {
     @Column(name = "icon_code_id", length = 30)
     private String iconCodeId;
 
+    @ColumnDefault("true")
+    @Column(name = "is_used", columnDefinition = "TINYINT(1)", nullable = false)
+    private boolean isUsed;
+
     public MenuDto toDto() {
         return MenuDto.builder()
                 .id(getId())
@@ -41,6 +47,7 @@ public class MenuEntity extends ExtendedBaseEntity {
                 .title(title)
                 .path(path)
                 .iconCodeId(iconCodeId)
+                .isUsed(isUsed)
                 .createdAt(getCreatedAt())
                 .createMemberId(getCreateMemberId())
                 .createdBy(getCreatedBy())
