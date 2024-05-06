@@ -41,4 +41,9 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.existsById(id);
     }
 
+    @Override
+    public boolean existsByIdAtPlatform(String id, String platform) {
+        return memberRepository.existsByIdAtPlatform(id, platform);
+    }
+
 }

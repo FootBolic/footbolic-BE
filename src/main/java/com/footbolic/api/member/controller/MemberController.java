@@ -5,6 +5,7 @@ import com.footbolic.api.common.entity.ErrorResponse;
 import com.footbolic.api.common.entity.SuccessResponse;
 import com.footbolic.api.member.service.MemberService;
 import com.footbolic.api.member.dto.MemberDto;
+import com.footbolic.api.util.HttpUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,6 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.HttpURLConnection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Tag(name = "회원 API")
 @RequestMapping("/members")
@@ -46,20 +51,27 @@ public class MemberController {
     @Parameter(name = "id", description = "회원 식별번호", required = true)
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse> getMember(
-            @PathVariable(name = "id") String id
+            @PathVariable(name = "id") String id,
+            @RequestParam(name = "platform", required = false) String platform
     ) {
         if (id == null || id.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorResponse(
-                "Provided member id is invalid"
+                    "유효하지 않은 회원 식별번호입니다."
             ));
+        }
+
+        if (platform != null && !platform.isEmpty()) {
+            Map<String, Boolean> result = new HashMap<>();
+            result.put("memberExists", memberService.existsByIdAtPlatform(id, platform));
+            return ResponseEntity.ok(new SuccessResponse(result));
         } else {
             MemberDto member = memberService.findById(id);
 
             if (member != null) {
                 return ResponseEntity.ok(new SuccessResponse(member));
             } else {
-                return ResponseEntity.badRequest().body(new ErrorResponse(
-                    "Member with provided id does not exist"
+                return ResponseEntity.ok(new ErrorResponse(
+                        "조회된 회원이 없습니다."
                 ));
             }
         }
@@ -104,4 +116,47 @@ public class MemberController {
             ));
         }
     }
+
+    @Operation(summary = "네이버 API에 토큰 발급 요청", description = "네이버 API에 토큰 발급 요청")
+    @Parameter(name = "code", description = "네이버 API로부터 받은 인증코드", required = true)
+    @PostMapping("/oauth/naver")
+    public ResponseEntity<BaseResponse> authenticateFromNaver(
+            @RequestParam(name = "code") String code
+    ) {
+        HttpUtil httpUtil = new HttpUtil();
+
+        HttpURLConnection conn  = httpUtil.getConn(
+                "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code" +
+                        "&client_id=Nw3kwPg8dk6L_kUkXPkk&client_secret=nu5DKFMki2&code="+code,
+                "GET"
+        );
+
+        String str = httpUtil.getHttpResponse(conn);
+
+        return ResponseEntity.ok(new SuccessResponse(str));
+    }
+
+    @Operation(summary = "네이버 API에 사용자 정보 요청", description = "네이버 API에 사용자 정보 요청")
+    @Parameter(name = "token_type", description = "네이버 API로부터 받은 토큰의 타입", required = true)
+    @Parameter(name = "access_token", description = "네이버 API로부터 받은 토큰", required = true)
+    @PostMapping("/oauth/naver/user-info")
+    public ResponseEntity<BaseResponse> getUserInfo(
+            @RequestParam(name = "token_type") String tokenType,
+            @RequestParam(name = "access_token") String accessToken
+    ) {
+        HttpUtil httpUtil = new HttpUtil();
+
+        HttpURLConnection conn  = httpUtil.getConn(
+                "https://openapi.naver.com/v1/nid/me",
+                "GET"
+        );
+
+        conn.setRequestProperty("Authorization", tokenType + " " + accessToken);
+
+        String str = httpUtil.getHttpResponse(conn);
+
+        return ResponseEntity.ok(new SuccessResponse(str));
+    }
 }
+
+

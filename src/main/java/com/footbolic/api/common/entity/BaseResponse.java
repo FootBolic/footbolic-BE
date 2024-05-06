@@ -1,5 +1,6 @@
 package com.footbolic.api.common.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -7,7 +8,8 @@ import lombok.Getter;
 @Getter
 public class BaseResponse {
 
-    private boolean success;
+    @JsonProperty("isSuccess")
+    private boolean isSuccess;
 
     private String message;
 

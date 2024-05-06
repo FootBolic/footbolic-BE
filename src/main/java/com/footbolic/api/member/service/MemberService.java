@@ -17,4 +17,6 @@ public interface MemberService {
 
     boolean existsById(String id);
 
+    boolean existsByIdAtPlatform(String id, String platform);
+
 }

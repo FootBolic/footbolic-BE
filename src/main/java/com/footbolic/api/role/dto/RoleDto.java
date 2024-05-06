@@ -43,7 +43,6 @@ public class RoleDto {
         return RoleEntity.builder()
                 .id(id)
                 .title(title)
-                .members(members == null ? null : members.stream().map(MemberDto::toEntity).toList())
                 .authorizations(authorizations == null ? null : authorizations.stream().map(AuthorizationDto::toEntity).toList())
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)

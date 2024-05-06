@@ -3,8 +3,10 @@ package com.footbolic.api.member.dto;
 import com.footbolic.api.member.entity.MemberEntity;
 import com.footbolic.api.role.dto.RoleDto;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -15,17 +17,31 @@ public class MemberDto {
 
     private String id;
 
-    private String title;
-
     private String roleId;
 
     private RoleDto role;
 
-    private String fullName;
-
     private String nickname;
 
+    private String idAtProvider;
+
+    private String platform;
+
     private String refreshToken;
+
+    @DateTimeFormat(pattern="yyyy-MM-ddTHH:mm:ss")
+    private LocalDateTime refreshTokenExpiresAt;
+
+    private String accessToken;
+
+    @DateTimeFormat(pattern="yyyy-MM-ddTHH:mm:ss")
+    private LocalDateTime accessTokenExpiresAt;
+
+    private String idToken;
+
+    private String scope;
+
+    private String tokenType;
 
     private LocalDateTime createdAt;
 
@@ -36,9 +52,16 @@ public class MemberDto {
                 .id(id)
                 .roleId(roleId)
                 .role(role == null ? null : role.toEntity())
-                .fullName(fullName)
                 .nickname(nickname)
+                .idAtProvider(idAtProvider)
+                .platform(platform)
                 .refreshToken(refreshToken)
+                .refreshTokenExpiresAt(refreshTokenExpiresAt)
+                .accessToken(accessToken)
+                .accessTokenExpiresAt(accessTokenExpiresAt)
+                .idToken(idToken)
+                .scope(scope)
+                .tokenType(tokenType)
                 .createdAt(createdAt)
                 .updatedAt(updatedAt)
                 .build();
