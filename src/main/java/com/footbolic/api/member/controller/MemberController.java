@@ -51,30 +51,36 @@ public class MemberController {
     @Parameter(name = "id", description = "회원 식별번호", required = true)
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse> getMember(
-            @PathVariable(name = "id") String id,
-            @RequestParam(name = "platform", required = false) String platform
+            @PathVariable(name = "id") String id
     ) {
         if (id == null || id.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(
-                    "유효하지 않은 회원 식별번호입니다."
-            ));
+            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원 식별번호입니다."));
         }
 
-        if (platform != null && !platform.isEmpty()) {
-            Map<String, Boolean> result = new HashMap<>();
-            result.put("memberExists", memberService.existsByIdAtPlatform(id, platform));
-            return ResponseEntity.ok(new SuccessResponse(result));
+        MemberDto member = memberService.findById(id);
+
+        if (member != null) {
+            return ResponseEntity.ok(new SuccessResponse(member));
         } else {
-            MemberDto member = memberService.findById(id);
-
-            if (member != null) {
-                return ResponseEntity.ok(new SuccessResponse(member));
-            } else {
-                return ResponseEntity.ok(new ErrorResponse(
-                        "조회된 회원이 없습니다."
-                ));
-            }
+            return ResponseEntity.ok(new ErrorResponse("조회된 회원이 없습니다."));
         }
+    }
+
+    @Operation(summary = "회원 단건 조회", description = "전달 받은 식별번호를 가진 회원 조회")
+    @Parameter(name = "id", description = "회원 식별번호", required = true)
+    @GetMapping("/public/{id}")
+    public ResponseEntity<BaseResponse> memberExists(
+            @PathVariable(name = "id") String id,
+            @RequestParam(name = "platform") String platform
+    ) {
+        if (id == null || id.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원 식별번호입니다."));
+        }
+
+        Map<String, Boolean> result = new HashMap<>();
+        result.put("memberExists", memberService.existsByIdAtPlatform(id, platform));
+
+        return ResponseEntity.ok(new SuccessResponse(result));
     }
 
     @Operation(summary = "회원 수정", description = "파라미터로 전달 받은 회원를 수정")
@@ -84,16 +90,12 @@ public class MemberController {
             @RequestBody @Valid MemberDto member
     ) {
         if (member.getId() == null || member.getId().isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(
-                "Provided member id is invalid"
-            ));
+            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원 식별번호입니다."));
         } else if (memberService.existsById(member.getId())) {
             MemberDto updatedMember = memberService.saveMember(member);
             return ResponseEntity.ok(new SuccessResponse(updatedMember));
         } else {
-            return ResponseEntity.badRequest().body(new ErrorResponse(
-                "Provided member does not exist"
-            ));
+            return ResponseEntity.badRequest().body(new ErrorResponse("조회된 회원이 없습니다"));
         }
     }
 
@@ -104,22 +106,18 @@ public class MemberController {
             @PathVariable(name = "id") String id
     ) {
         if (id == null || id.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(
-                "Provided member id is invalid"
-            ));
+            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원 식별번호입니다."));
         } else if (memberService.existsById(id)) {
             memberService.deleteMember(id);
             return ResponseEntity.ok(new SuccessResponse(null));
         } else {
-            return ResponseEntity.badRequest().body(new ErrorResponse(
-                "Member with provided id does not exist"
-            ));
+            return ResponseEntity.badRequest().body(new ErrorResponse("조회된 회원이 없습니다."));
         }
     }
 
     @Operation(summary = "네이버 API에 토큰 발급 요청", description = "네이버 API에 토큰 발급 요청")
     @Parameter(name = "code", description = "네이버 API로부터 받은 인증코드", required = true)
-    @PostMapping("/oauth/naver")
+    @PostMapping("/public/oauth/naver")
     public ResponseEntity<BaseResponse> authenticateFromNaver(
             @RequestParam(name = "code") String code
     ) {
@@ -139,7 +137,7 @@ public class MemberController {
     @Operation(summary = "네이버 API에 사용자 정보 요청", description = "네이버 API에 사용자 정보 요청")
     @Parameter(name = "token_type", description = "네이버 API로부터 받은 토큰의 타입", required = true)
     @Parameter(name = "access_token", description = "네이버 API로부터 받은 토큰", required = true)
-    @PostMapping("/oauth/naver/user-info")
+    @PostMapping("/public/oauth/naver/user-info")
     public ResponseEntity<BaseResponse> getUserInfo(
             @RequestParam(name = "token_type") String tokenType,
             @RequestParam(name = "access_token") String accessToken
