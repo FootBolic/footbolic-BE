@@ -9,6 +9,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Schema(name = "Member 객체")
 @Data
@@ -37,12 +38,6 @@ public class MemberDto {
     @DateTimeFormat(pattern="yyyy-MM-ddTHH:mm:ss")
     private LocalDateTime accessTokenExpiresAt;
 
-    private String idToken;
-
-    private String scope;
-
-    private String tokenType;
-
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -59,9 +54,6 @@ public class MemberDto {
                 .refreshTokenExpiresAt(refreshTokenExpiresAt)
                 .accessToken(accessToken)
                 .accessTokenExpiresAt(accessTokenExpiresAt)
-                .idToken(idToken)
-                .scope(scope)
-                .tokenType(tokenType)
                 .createdAt(createdAt)
                 .updatedAt(updatedAt)
                 .build();

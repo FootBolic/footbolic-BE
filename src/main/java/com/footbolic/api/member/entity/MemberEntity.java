@@ -38,26 +38,17 @@ public class MemberEntity extends BaseEntity {
     @Column(name = "platform", nullable = false, updatable = false, length = 20)
     private String platform;
 
-    @Column(name = "refresh_token", length = 200)
+    @Column(name = "refresh_token", length = 500)
     private String refreshToken;
 
     @Column(name = "refresh_token_expires_at")
     private LocalDateTime refreshTokenExpiresAt;
 
-    @Column(name = "access_token", length = 200)
+    @Transient
     private String accessToken;
 
-    @Column(name = "access_token_expires_at")
+    @Transient
     private LocalDateTime accessTokenExpiresAt;
-
-    @Column(name = "id_token", length = 2000)
-    private String idToken;
-
-    @Column(name = "scope", length = 30)
-    private String scope;
-
-    @Column(name = "token_type", length = 30)
-    private String tokenType;
 
     @Builder.Default
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
@@ -75,9 +66,6 @@ public class MemberEntity extends BaseEntity {
                 .refreshTokenExpiresAt(refreshTokenExpiresAt)
                 .accessToken(accessToken)
                 .accessTokenExpiresAt(accessTokenExpiresAt)
-                .idToken(idToken)
-                .scope(scope)
-                .tokenType(tokenType)
                 .createdAt(getCreatedAt())
                 .updatedAt(getUpdatedAt())
                 .build();

@@ -11,12 +11,16 @@ public interface MemberService {
 
     MemberDto findById(String id);
 
+    MemberDto findByIdAtPlatform(String idAtPlatform, String platform);
+
     MemberDto saveMember(MemberDto role);
 
     void deleteMember(String id);
 
     boolean existsById(String id);
 
-    boolean existsByIdAtPlatform(String id, String platform);
+    boolean existsByIdAtPlatform(String idAtPlatform, String platform);
+
+    void updateTokenInfo(MemberDto member);
 
 }
