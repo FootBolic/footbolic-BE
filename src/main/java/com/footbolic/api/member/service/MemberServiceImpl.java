@@ -34,8 +34,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberDto saveMember(MemberDto member) {
-        MemberEntity createdMember = memberRepository.save(member.toEntity());
-        return createdMember.toDto();
+        return memberRepository.save(member.toEntity()).toDto();
     }
 
     @Override

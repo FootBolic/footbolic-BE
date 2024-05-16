@@ -33,6 +33,8 @@ public class MemberDto {
     @DateTimeFormat(pattern="yyyy-MM-ddTHH:mm:ss")
     private LocalDateTime refreshTokenExpiresAt;
 
+    private LocalDateTime nicknameLastUpdatedAt;
+
     private String accessToken;
 
     @DateTimeFormat(pattern="yyyy-MM-ddTHH:mm:ss")
@@ -52,6 +54,7 @@ public class MemberDto {
                 .platform(platform)
                 .refreshToken(refreshToken)
                 .refreshTokenExpiresAt(refreshTokenExpiresAt)
+                .nicknameLastUpdatedAt(nicknameLastUpdatedAt)
                 .accessToken(accessToken)
                 .accessTokenExpiresAt(accessTokenExpiresAt)
                 .createdAt(createdAt)

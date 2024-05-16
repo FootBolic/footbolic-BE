@@ -54,18 +54,14 @@ public class MenuController {
             @PathVariable(name = "id") String id
     ) {
         if (id == null || id.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(
-                "Provided menu id is invalid"
-            ));
+            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 메뉴 식별번호입니다."));
         } else {
             MenuDto menu = menuService.findById(id);
 
             if (menu != null) {
                 return ResponseEntity.ok(new SuccessResponse(menu));
             } else {
-                return ResponseEntity.badRequest().body(new ErrorResponse(
-                    "Menu with provided id does not exist"
-                ));
+                return ResponseEntity.badRequest().body(new ErrorResponse("존재하지 않는 메뉴입니다."));
             }
         }
     }
@@ -77,36 +73,28 @@ public class MenuController {
             @RequestBody @Valid MenuDto menu
     ) {
         if (menu.getId() == null || menu.getId().isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(
-                "Provided menu id is invalid"
-            ));
+            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 메뉴 식별번호입니다."));
         } else if (menuService.existsById(menu.getId())) {
             MenuDto updatedMenu = menuService.saveMenu(menu);
             return ResponseEntity.ok(new SuccessResponse(updatedMenu));
         } else {
-            return ResponseEntity.badRequest().body(new ErrorResponse(
-                "Provided menu does not exist"
-            ));
+            return ResponseEntity.badRequest().body(new ErrorResponse("존재하지 않는 메뉴입니다."));
         }
     }
 
     @Operation(summary = "메뉴 삭제", description = "제공된 식별번호를 가진 메뉴를 삭제")
-    @Parameter(name = "menu", description = "수정할 메뉴 객체", required = true)
+    @Parameter(name = "menu", description = "삭제할 메뉴 객체", required = true)
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deleteMenu(
             @PathVariable(name = "id") String id
     ) {
         if (id == null || id.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(
-                "Provided menu id is invalid"
-            ));
+            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 메뉴 식별번호입니다."));
         } else if (menuService.existsById(id)) {
             menuService.deleteMenu(id);
             return ResponseEntity.ok(new SuccessResponse(null));
         } else {
-            return ResponseEntity.badRequest().body(new ErrorResponse(
-                "Menu with provided id does not exist"
-            ));
+            return ResponseEntity.badRequest().body(new ErrorResponse("존재하지 않는 메뉴입니다."));
         }
     }
 }
