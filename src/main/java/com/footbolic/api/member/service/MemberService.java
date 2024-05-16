@@ -13,7 +13,7 @@ public interface MemberService {
 
     MemberDto findByIdAtPlatform(String idAtPlatform, String platform);
 
-    MemberDto saveMember(MemberDto role);
+    MemberDto saveMember(MemberDto member);
 
     void deleteMember(String id);
 

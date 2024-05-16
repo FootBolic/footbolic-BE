@@ -44,6 +44,9 @@ public class MemberEntity extends BaseEntity {
     @Column(name = "refresh_token_expires_at")
     private LocalDateTime refreshTokenExpiresAt;
 
+    @Column(name = "nickname_last_updated_at")
+    private LocalDateTime nicknameLastUpdatedAt;
+
     @Transient
     private String accessToken;
 
@@ -64,6 +67,7 @@ public class MemberEntity extends BaseEntity {
                 .platform(platform)
                 .refreshToken(refreshToken)
                 .refreshTokenExpiresAt(refreshTokenExpiresAt)
+                .nicknameLastUpdatedAt(nicknameLastUpdatedAt)
                 .accessToken(accessToken)
                 .accessTokenExpiresAt(accessTokenExpiresAt)
                 .createdAt(getCreatedAt())

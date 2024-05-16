@@ -6,6 +6,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+
 import static com.footbolic.api.member.entity.QMemberEntity.memberEntity;
 
 @Repository
@@ -38,6 +40,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
         queryFactory.update(memberEntity)
                 .set(memberEntity.refreshToken, member.getRefreshToken())
                 .set(memberEntity.refreshTokenExpiresAt, member.getRefreshTokenExpiresAt())
+                .set(memberEntity.updatedAt, LocalDateTime.now())
                 .where(memberEntity.id.eq(member.getId()))
                 .execute();
     }

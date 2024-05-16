@@ -82,9 +82,12 @@ public class SignController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        String accessToken = jwtUtil.extractAccessToken(request);
-
-        MemberDto member = jwtUtil.resolveAccessToken(accessToken);
+        MemberDto member = Optional.ofNullable(jwtUtil.extractAccessToken(request))
+                .filter(jwtUtil::validateToken)
+                .map(jwtUtil::resolveAccessToken)
+                .filter(e -> e.getAccessTokenExpiresAt().isAfter(LocalDateTime.now()))
+                .filter(e -> e.getRoleId() != null && !e.getRoleId().isEmpty())
+                .orElse(null);
 
         if (member != null) {
             jwtUtil.removeRefreshToken(response);
