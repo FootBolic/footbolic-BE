@@ -93,7 +93,11 @@ public class SignController {
             jwtUtil.removeRefreshToken(response);
             memberService.updateTokenInfo(MemberDto.builder().id(member.getId()).build());
 
-            return ResponseEntity.ok(new SuccessResponse(""));
+            Map<String, String> result = new HashMap<>();
+
+            result.put("id", member.getId());
+
+            return ResponseEntity.ok(new SuccessResponse(result));
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("로그아웃할 회원이 존재하지 않습니다."));
         }

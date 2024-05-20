@@ -32,10 +32,10 @@ public class MemberEntity extends BaseEntity {
     @Column(name = "nickname", nullable = false, length = 20)
     private String nickname;
 
-    @Column(name = "id_at_provider", length = 100)
+    @Column(name = "id_at_provider", nullable = false, length = 100)
     private String idAtProvider;
 
-    @Column(name = "platform", nullable = false, updatable = false, length = 20)
+    @Column(name = "platform", nullable = false, length = 20)
     private String platform;
 
     @Column(name = "refresh_token", length = 500)

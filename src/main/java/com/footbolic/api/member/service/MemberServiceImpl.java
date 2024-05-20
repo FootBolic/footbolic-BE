@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,7 +19,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
 
     @Override
-    public List<MemberDto> findAllMembers(Pageable pageable) {
+    public List<MemberDto> findAll(Pageable pageable) {
         return memberRepository.findAll(pageable).stream().map(MemberEntity::toDto).toList();
     }
 
@@ -40,6 +41,18 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void deleteMember(String id) {
         memberRepository.deleteById(id);
+    }
+
+    @Override
+    public void withdraw(MemberDto member) {
+        member.setNickname("-");
+        member.setPlatform("-");
+        member.setIdAtProvider("-");
+        member.setRefreshToken(null);
+        member.setRefreshTokenExpiresAt(null);
+        member.setNicknameLastUpdatedAt(null);
+        member.setUpdatedAt(LocalDateTime.now());
+        memberRepository.save(member.toEntity());
     }
 
     @Override
