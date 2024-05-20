@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MemberService {
 
-    List<MemberDto> findAllMembers(Pageable pageable);
+    List<MemberDto> findAll(Pageable pageable);
 
     MemberDto findById(String id);
 
@@ -16,6 +16,8 @@ public interface MemberService {
     MemberDto saveMember(MemberDto member);
 
     void deleteMember(String id);
+
+    void withdraw(MemberDto member);
 
     boolean existsById(String id);
 

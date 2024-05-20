@@ -7,6 +7,7 @@ import com.footbolic.api.member.service.MemberService;
 import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.util.HttpUtil;
 import com.footbolic.api.util.JwtUtil;
+import io.jsonwebtoken.io.IOException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,11 +38,25 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    private final HttpUtil httpUtil;
+
+    @Value("${auth.platform.naver}")
+    private String NAVER;
+
+    @Value("${auth.platform.kakao}")
+    private String KAKAO;
+
+    @Value("${auth.platform.naver.client_id}")
+    private String NAVER_CLIENT_ID;
+
+    @Value("${auth.platform.naver.client_secret}")
+    private String NAVER_CLIENT_SECRET;
+
     @Operation(summary = "회원 목록 조회", description = "회원 목록을 page 단위로 조회")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public SuccessResponse getMemberList(Pageable pageable) {
-        return new SuccessResponse(memberService.findAllMembers(pageable));
+        return new SuccessResponse(memberService.findAll(pageable));
     }
 
     @Operation(summary = "회원 생성", description = "파라미터로 전달 받은 회원를 생성")
@@ -91,6 +107,31 @@ public class MemberController {
         result.put("memberExists", memberService.existsByIdAtPlatform(id, platform));
 
         return ResponseEntity.ok(new SuccessResponse(result));
+    }
+
+    @Operation(summary = "회원 회원가입 플랫폼 조회", description = "Access Token에 존재하는 회원의 회원가입 플랫폼 조회")
+    @PostMapping("/me/platform")
+    public ResponseEntity<BaseResponse> checkPlatform(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        MemberDto tokenMember = jwtUtil.resolveAccessToken(jwtUtil.extractAccessToken(request));
+
+        if ( tokenMember == null || tokenMember.getId() == null || tokenMember.getId().isBlank()) {
+            jwtUtil.removeRefreshToken(response);
+            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원정보입니다."));
+        }
+
+        MemberDto member = memberService.findById(tokenMember.getId());
+
+        if (member == null || member.getPlatform() == null || member.getPlatform().isBlank()) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원정보입니다."));
+        } else {
+            Map<String, String> result = new HashMap<>();
+            result.put("platform", member.getPlatform());
+
+            return ResponseEntity.ok(new SuccessResponse(result));
+        }
     }
 
     @Operation(summary = "회원 수정", description = "파라미터로 전달 받은 회원을 수정")
@@ -163,11 +204,10 @@ public class MemberController {
     public ResponseEntity<BaseResponse> authenticateFromNaver(
             @RequestParam(name = "code") String code
     ) {
-        HttpUtil httpUtil = new HttpUtil();
-
         HttpURLConnection conn  = httpUtil.getConn(
                 "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code" +
-                        "&client_id=Nw3kwPg8dk6L_kUkXPkk&client_secret=nu5DKFMki2&code="+code,
+                        "&client_id=" + NAVER_CLIENT_ID +
+                        "&client_secret=" + NAVER_CLIENT_SECRET + "&code=" + code,
                 "GET"
         );
 
@@ -184,8 +224,6 @@ public class MemberController {
             @RequestParam(name = "token_type") String tokenType,
             @RequestParam(name = "access_token") String accessToken
     ) {
-        HttpUtil httpUtil = new HttpUtil();
-
         HttpURLConnection conn  = httpUtil.getConn(
                 "https://openapi.naver.com/v1/nid/me",
                 "GET"
@@ -196,5 +234,64 @@ public class MemberController {
         String str = httpUtil.getHttpResponse(conn);
 
         return ResponseEntity.ok(new SuccessResponse(str));
+    }
+
+    @Operation(summary = "Access Token으로 회원 탈퇴 처리", description = "Access Token으로 회원 탈퇴 처리")
+    @Parameter(name = "access_token", description = "로그인 API 제공자로부터 받은 Access Token", required = true)
+    @DeleteMapping("/me")
+    public ResponseEntity<BaseResponse> deleteTokenMember(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestParam(name = "access_token") String providerToken
+    ) {
+        MemberDto tokenMember = jwtUtil.resolveAccessToken(jwtUtil.extractAccessToken(request));
+
+        if ( tokenMember == null ||
+                tokenMember.getIdAtProvider() == null || tokenMember.getIdAtProvider().isBlank()
+                || tokenMember.getPlatform() == null || tokenMember.getPlatform().isBlank() ) {
+            jwtUtil.removeRefreshToken(response);
+            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원정보입니다."));
+        }
+
+        MemberDto member = memberService.findById(tokenMember.getId());
+
+        try {
+            HttpURLConnection conn;
+
+            if (member.getPlatform().equals(NAVER)) {
+                conn = httpUtil.getConn(
+                        "https://nid.naver.com/oauth2.0/token?grant_type=delete" +
+                                "&client_id=" + NAVER_CLIENT_ID +
+                                "&client_secret=" + NAVER_CLIENT_SECRET +
+                                "&access_token=" + providerToken,
+                        "GET"
+                );
+            } else if (member.getPlatform().equals(KAKAO)) {
+                conn = httpUtil.getConn(
+                        "https://kapi.kakao.com/v1/user/unlink",
+                        "POST"
+                );
+
+                conn.setRequestProperty("Authorization", "Bearer " + providerToken);
+            } else {
+                return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원정보입니다."));
+            }
+
+            String httpResponse = httpUtil.getHttpResponse(conn);
+
+            if (httpResponse == null) {
+                return ResponseEntity.badRequest().body(new ErrorResponse("서버와의 통신이 원활하지 않습니다."));
+            } else {
+                memberService.withdraw(member);
+                jwtUtil.removeRefreshToken(response);
+
+                Map<String, String> result = new HashMap<>();
+                result.put("id", member.getId());
+
+                return ResponseEntity.ok(new SuccessResponse(result));
+            }
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("서버와 통신중 에러가 발생하였습니다."));
+        }
     }
 }
