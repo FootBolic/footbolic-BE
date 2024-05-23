@@ -1,12 +1,16 @@
 package com.footbolic.api.member.repository;
 
-import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.member.entity.MemberEntity;
+import com.querydsl.core.types.Order;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.footbolic.api.member.entity.QMemberEntity.memberEntity;
 
@@ -15,6 +19,36 @@ import static com.footbolic.api.member.entity.QMemberEntity.memberEntity;
 public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
+    @Value("${auth.platform.naver}")
+    private String NAVER;
+
+    @Value("${auth.platform.kakao}")
+    private String KAKAO;
+
+    @Override
+    public List<MemberEntity> findAllActiveMembers(Pageable pageable) {
+        String[] platforms = {NAVER, KAKAO};
+        return queryFactory.selectFrom(memberEntity)
+                .where(
+                        memberEntity.platform.in(Arrays.asList(platforms))
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(memberEntity.id.desc())
+                .fetch();
+    }
+
+    @Override
+    public long countActiveMembers() {
+        String[] platforms = {NAVER, KAKAO};
+        return queryFactory.selectFrom(memberEntity)
+                .where(
+                        memberEntity.platform.in(Arrays.asList(platforms))
+                )
+                .fetch()
+                .size();
+    }
 
     @Override
     public MemberEntity findByIdAtPlatform(String idAtPlatform, String platform) {

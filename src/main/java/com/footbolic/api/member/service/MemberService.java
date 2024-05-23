@@ -9,6 +9,8 @@ public interface MemberService {
 
     List<MemberDto> findAll(Pageable pageable);
 
+    long count();
+
     MemberDto findById(String id);
 
     MemberDto findByIdAtPlatform(String idAtPlatform, String platform);

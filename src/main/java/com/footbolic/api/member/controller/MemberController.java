@@ -5,9 +5,9 @@ import com.footbolic.api.common.entity.ErrorResponse;
 import com.footbolic.api.common.entity.SuccessResponse;
 import com.footbolic.api.member.service.MemberService;
 import com.footbolic.api.member.dto.MemberDto;
+import com.footbolic.api.role.service.RoleService;
 import com.footbolic.api.util.HttpUtil;
 import com.footbolic.api.util.JwtUtil;
-import io.jsonwebtoken.io.IOException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +22,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +37,11 @@ import java.util.Map;
 @Slf4j
 public class MemberController {
 
-    private final JwtUtil jwtUtil;
+    private final RoleService roleService;
 
     private final MemberService memberService;
+
+    private final JwtUtil jwtUtil;
 
     private final HttpUtil httpUtil;
 
@@ -52,11 +57,18 @@ public class MemberController {
     @Value("${auth.platform.naver.client_secret}")
     private String NAVER_CLIENT_SECRET;
 
+    @Value("${auth.platform.kakao.admin_key}")
+    private String KAKAO_ADMIN_KEY;
+
     @Operation(summary = "회원 목록 조회", description = "회원 목록을 page 단위로 조회")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public SuccessResponse getMemberList(Pageable pageable) {
-        return new SuccessResponse(memberService.findAll(pageable));
+        Map<String, Object> result = new HashMap<>();
+        result.put("members", memberService.findAll(pageable));
+        result.put("size", memberService.count());
+
+        return new SuccessResponse(result);
     }
 
     @Operation(summary = "회원 생성", description = "파라미터로 전달 받은 회원를 생성")
@@ -66,12 +78,27 @@ public class MemberController {
             @RequestBody @Valid MemberDto member
     ) {
         member.setNicknameLastUpdatedAt(LocalDateTime.now());
+        member.setRoleId(roleService.findDefaultRole().getId());
         return ResponseEntity.ok(new SuccessResponse(memberService.saveMember(member)));
+    }
+
+    @Operation(summary = "회원 단건 조회", description = "회원 식별번호로 회원정보 조회")
+    @GetMapping("/{id}")
+    public ResponseEntity<BaseResponse> getMember(
+            @PathVariable(name = "id") String id
+    ) {
+        MemberDto member = memberService.findById(id);
+
+        if (member != null) {
+            return ResponseEntity.ok(new SuccessResponse(member));
+        } else {
+            return ResponseEntity.badRequest().body(new ErrorResponse("조회된 회원이 없습니다."));
+        }
     }
 
     @Operation(summary = "회원 단건 조회", description = "Access Token으로 회원정보 조회")
     @PostMapping("/me")
-    public ResponseEntity<BaseResponse> getMember(
+    public ResponseEntity<BaseResponse> getTokenMember(
             HttpServletRequest request,
             HttpServletResponse response
     ) {
@@ -138,13 +165,22 @@ public class MemberController {
     @Parameter(name = "member", description = "수정할 회원 객체", required = true)
     @PatchMapping
     public ResponseEntity<BaseResponse> updateMember(
-            @RequestBody @Valid MemberDto member
+            @RequestBody @Valid MemberDto paramMember
     ) {
-        if (member.getId() == null || member.getId().isEmpty()) {
+        if (paramMember.getId() == null || paramMember.getId().isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원 식별번호입니다."));
-        } else if (memberService.existsById(member.getId())) {
-            MemberDto updatedMember = memberService.saveMember(member);
-            return ResponseEntity.ok(new SuccessResponse(updatedMember));
+        } else if (memberService.existsById(paramMember.getId())) {
+            MemberDto member = memberService.findById(paramMember.getId());
+
+            if (member.getNickname().equals(paramMember.getNickname())) {
+                return ResponseEntity.badRequest().body(new ErrorResponse("변경된 정보가 없습니다."));
+            } else {
+                member.setNickname(paramMember.getNickname());
+                member.setNicknameLastUpdatedAt(LocalDateTime.now());
+                MemberDto updatedMember = memberService.saveMember(member);
+
+                return ResponseEntity.ok(new SuccessResponse(updatedMember));
+            }
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("조회된 회원이 없습니다"));
         }
@@ -191,10 +227,105 @@ public class MemberController {
         if (id == null || id.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원 식별번호입니다."));
         } else if (memberService.existsById(id)) {
-            memberService.deleteMember(id);
-            return ResponseEntity.ok(new SuccessResponse(null));
+            MemberDto member = memberService.findById(id);
+
+            try {
+                HttpURLConnection conn;
+
+                if (member.getPlatform().equals(NAVER)) {
+                    return ResponseEntity.ok(new ErrorResponse("네이버를 통해 가입한 회원은 직접 탈퇴만 가능합니다."));
+                } else if (member.getPlatform().equals(KAKAO)) {
+                    conn = httpUtil.getConn(
+                            "https://kapi.kakao.com/v1/user/unlink",
+                            "POST"
+                    );
+
+                    conn.setRequestProperty("Authorization", "KakaoAK " + KAKAO_ADMIN_KEY);
+                    conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+                    conn.setDoOutput(true);
+
+                    String paramData = "target_id_type=user_id&target_id=" + member.getIdAtProvider();
+
+                    byte[] data = paramData.getBytes(StandardCharsets.UTF_8);
+                    try (OutputStream os = conn.getOutputStream()) {
+                        os.write(data);
+                    }
+                } else {
+                    return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원정보입니다."));
+                }
+
+                String httpResponse = httpUtil.getHttpResponse(conn);
+
+                if (httpResponse == null) {
+                    return ResponseEntity.badRequest().body(new ErrorResponse("서버와의 통신이 원활하지 않습니다."));
+                } else {
+                    memberService.withdraw(member);
+
+                    Map<String, String> result = new HashMap<>();
+                    result.put("id", member.getId());
+
+                    return ResponseEntity.ok(new SuccessResponse(result));
+                }
+            } catch (IOException e) {
+                return ResponseEntity.badRequest().body(new ErrorResponse("서버와 통신중 에러가 발생하였습니다."));
+            }
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("조회된 회원이 없습니다."));
+        }
+    }
+
+    @Operation(summary = "Access Token으로 회원 탈퇴 처리", description = "Access Token으로 회원 탈퇴 처리")
+    @Parameter(name = "access_token", description = "로그인 API 제공자로부터 받은 Access Token", required = true)
+    @DeleteMapping("/me")
+    public ResponseEntity<BaseResponse> deleteTokenMember(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestParam(name = "access_token") String providerToken
+    ) {
+        MemberDto tokenMember = jwtUtil.resolveAccessToken(jwtUtil.extractAccessToken(request));
+
+        if ( tokenMember == null ||
+                tokenMember.getIdAtProvider() == null || tokenMember.getIdAtProvider().isBlank()
+                || tokenMember.getPlatform() == null || tokenMember.getPlatform().isBlank() ) {
+            jwtUtil.removeRefreshToken(response);
+            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원정보입니다."));
+        }
+
+        MemberDto member = memberService.findById(tokenMember.getId());
+
+        HttpURLConnection conn;
+
+        if (member.getPlatform().equals(NAVER)) {
+            conn = httpUtil.getConn(
+                    "https://nid.naver.com/oauth2.0/token?grant_type=delete" +
+                            "&client_id=" + NAVER_CLIENT_ID +
+                            "&client_secret=" + NAVER_CLIENT_SECRET +
+                            "&access_token=" + providerToken,
+                    "GET"
+            );
+        } else if (member.getPlatform().equals(KAKAO)) {
+            conn = httpUtil.getConn(
+                    "https://kapi.kakao.com/v1/user/unlink",
+                    "POST"
+            );
+
+            conn.setRequestProperty("Authorization", "Bearer " + providerToken);
+        } else {
+            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원정보입니다."));
+        }
+
+        String httpResponse = httpUtil.getHttpResponse(conn);
+
+        if (httpResponse == null) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("서버와의 통신이 원활하지 않습니다."));
+        } else {
+            memberService.withdraw(member);
+            jwtUtil.removeRefreshToken(response);
+
+            Map<String, String> result = new HashMap<>();
+            result.put("id", member.getId());
+
+            return ResponseEntity.ok(new SuccessResponse(result));
         }
     }
 
@@ -234,64 +365,5 @@ public class MemberController {
         String str = httpUtil.getHttpResponse(conn);
 
         return ResponseEntity.ok(new SuccessResponse(str));
-    }
-
-    @Operation(summary = "Access Token으로 회원 탈퇴 처리", description = "Access Token으로 회원 탈퇴 처리")
-    @Parameter(name = "access_token", description = "로그인 API 제공자로부터 받은 Access Token", required = true)
-    @DeleteMapping("/me")
-    public ResponseEntity<BaseResponse> deleteTokenMember(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            @RequestParam(name = "access_token") String providerToken
-    ) {
-        MemberDto tokenMember = jwtUtil.resolveAccessToken(jwtUtil.extractAccessToken(request));
-
-        if ( tokenMember == null ||
-                tokenMember.getIdAtProvider() == null || tokenMember.getIdAtProvider().isBlank()
-                || tokenMember.getPlatform() == null || tokenMember.getPlatform().isBlank() ) {
-            jwtUtil.removeRefreshToken(response);
-            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원정보입니다."));
-        }
-
-        MemberDto member = memberService.findById(tokenMember.getId());
-
-        try {
-            HttpURLConnection conn;
-
-            if (member.getPlatform().equals(NAVER)) {
-                conn = httpUtil.getConn(
-                        "https://nid.naver.com/oauth2.0/token?grant_type=delete" +
-                                "&client_id=" + NAVER_CLIENT_ID +
-                                "&client_secret=" + NAVER_CLIENT_SECRET +
-                                "&access_token=" + providerToken,
-                        "GET"
-                );
-            } else if (member.getPlatform().equals(KAKAO)) {
-                conn = httpUtil.getConn(
-                        "https://kapi.kakao.com/v1/user/unlink",
-                        "POST"
-                );
-
-                conn.setRequestProperty("Authorization", "Bearer " + providerToken);
-            } else {
-                return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원정보입니다."));
-            }
-
-            String httpResponse = httpUtil.getHttpResponse(conn);
-
-            if (httpResponse == null) {
-                return ResponseEntity.badRequest().body(new ErrorResponse("서버와의 통신이 원활하지 않습니다."));
-            } else {
-                memberService.withdraw(member);
-                jwtUtil.removeRefreshToken(response);
-
-                Map<String, String> result = new HashMap<>();
-                result.put("id", member.getId());
-
-                return ResponseEntity.ok(new SuccessResponse(result));
-            }
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body(new ErrorResponse("서버와 통신중 에러가 발생하였습니다."));
-        }
     }
 }

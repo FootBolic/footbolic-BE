@@ -20,7 +20,12 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public List<MemberDto> findAll(Pageable pageable) {
-        return memberRepository.findAll(pageable).stream().map(MemberEntity::toDto).toList();
+        return memberRepository.findAllActiveMembers(pageable).stream().map(MemberEntity::toDto).toList();
+    }
+
+    @Override
+    public long count() {
+        return memberRepository.countActiveMembers();
     }
 
     @Override
