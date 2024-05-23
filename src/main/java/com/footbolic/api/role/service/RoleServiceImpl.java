@@ -26,6 +26,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public RoleDto findDefaultRole() {
+        return roleRepository.findDefaultRole().toDto();
+    }
+
+    @Override
     public RoleDto saveRole(RoleDto role) {
         RoleEntity createdRole = roleRepository.save(role.toEntity());
         return createdRole.toDto();

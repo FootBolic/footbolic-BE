@@ -1,6 +1,5 @@
 package com.footbolic.api.member.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.footbolic.api.common.entity.BaseEntity;
 import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.notification.entity.NotificationEntity;

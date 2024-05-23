@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,10 @@ public class RoleEntity extends ExtendedBaseEntity {
 
     @Column(name = "title", nullable = false, length = 20)
     private String title;
+
+    @ColumnDefault("false")
+    @Column(name = "is_default", columnDefinition = "TINYINT(1)", nullable = false)
+    private boolean isDefault;
 
     @Builder.Default
     @Transient
