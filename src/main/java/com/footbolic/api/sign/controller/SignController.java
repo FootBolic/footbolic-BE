@@ -83,7 +83,7 @@ public class SignController {
             HttpServletResponse response
     ) {
         MemberDto member = Optional.ofNullable(jwtUtil.extractAccessToken(request))
-                .filter(jwtUtil::validateToken)
+                .filter(jwtUtil::validateAccessToken)
                 .map(jwtUtil::resolveAccessToken)
                 .filter(e -> e.getAccessTokenExpiresAt().isAfter(LocalDateTime.now()))
                 .filter(e -> e.getRoleId() != null && !e.getRoleId().isEmpty())
@@ -112,7 +112,7 @@ public class SignController {
         String refreshToken = jwtUtil.extractRefreshToken(request);
 
         Map<String, Boolean> result = new HashMap<>();
-        result.put("check_result", refreshToken != null && !refreshToken.isEmpty() && jwtUtil.validateToken(refreshToken));
+        result.put("check_result", refreshToken != null && !refreshToken.isEmpty() && jwtUtil.validateRefreshToken(refreshToken));
 
         return new SuccessResponse(result);
     }
@@ -131,7 +131,7 @@ public class SignController {
         }
 
         MemberDto tokenMember = Optional.of(refreshToken)
-                .filter(jwtUtil::validateToken)
+                .filter(jwtUtil::validateRefreshToken)
                 .map(jwtUtil::resolveRefreshToken)
                 .filter(e -> e.getRefreshTokenExpiresAt().isAfter(LocalDateTime.now()))
                 .filter(e -> e.getId() != null && !e.getId().isEmpty())

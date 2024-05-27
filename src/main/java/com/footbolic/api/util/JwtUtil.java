@@ -39,11 +39,19 @@ public class JwtUtil {
 
     private static final Long ACCESS_TOKEN_EXPIRES_IN =   30 * 60 * 1000L;
 
-    private final Key key;
+    private final Key refreshKey;
 
-    public JwtUtil(@Value("${jwt.secret}") String secretKey) {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
+    private final Key accessKey;
+
+    public JwtUtil(
+            @Value("${jwt.secret.refresh}") String refreshSecretKey,
+            @Value("${jwt.secret.access}") String accessSecretKey
+    ) {
+        byte[] refreshKeyBytes = Decoders.BASE64.decode(refreshSecretKey);
+        this.refreshKey = Keys.hmacShaKeyFor(refreshKeyBytes);
+
+        byte[] accessKeyBytes = Decoders.BASE64.decode(accessSecretKey);
+        this.accessKey = Keys.hmacShaKeyFor(accessKeyBytes);
     }
 
     /**
@@ -70,7 +78,7 @@ public class JwtUtil {
                 .claim(ID_CLAIM, member.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(expiration)
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(refreshKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -86,7 +94,7 @@ public class JwtUtil {
                 .claim(ID_AT_PROVIDER_CLAIM, member.getIdAtProvider())
                 .setIssuedAt(new Date())
                 .setExpiration(expiration)
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(accessKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -95,7 +103,7 @@ public class JwtUtil {
      */
     public MemberDto resolveAccessToken(String accessToken) {
 
-        Claims claims = parseClaims(accessToken);
+        Claims claims = parseAccessClaims(accessToken);
 
         if (claims.get(AUTH_CLAIM) == null) {
             log.error("권한정보가 없는 토큰입니다.");
@@ -116,7 +124,7 @@ public class JwtUtil {
      */
     public MemberDto resolveRefreshToken(String refreshToken) {
 
-        Claims claims = parseClaims(refreshToken);
+        Claims claims = parseRefreshClaims(refreshToken);
 
         return MemberDto.builder()
                 .id(claims.get(ID_CLAIM).toString())
@@ -125,11 +133,11 @@ public class JwtUtil {
     }
 
     /**
-     * 토큰 정보를 검증하는 메서드
+     * Access Token 정보를 검증하는 메서드
      */
-    public boolean validateToken(String token) {
+    public boolean validateAccessToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(accessKey).build().parseClaimsJws(token);
             return true;
         } catch (SecurityException | MalformedJwtException e) {
             log.error("Invalid JWT Token", e);
@@ -144,11 +152,41 @@ public class JwtUtil {
     }
 
     /**
-     * 토큰에서 body에 실린 데이터 추출
+     * Refresh Token 정보를 검증하는 메서드
      */
-    private Claims parseClaims(String token) {
+    public boolean validateRefreshToken(String token) {
         try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            Jwts.parserBuilder().setSigningKey(refreshKey).build().parseClaimsJws(token);
+            return true;
+        } catch (SecurityException | MalformedJwtException e) {
+            log.error("Invalid JWT Token", e);
+        } catch (ExpiredJwtException e) {
+            log.error("Expired JWT Token", e);
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT Token", e);
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty.", e);
+        }
+        return false;
+    }
+
+    /**
+     * Access Token에서 body에 실린 데이터 추출
+     */
+    private Claims parseAccessClaims(String token) {
+        try {
+            return Jwts.parserBuilder().setSigningKey(accessKey).build().parseClaimsJws(token).getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
+    }
+
+    /**
+     * Refresh Token에서 body에 실린 데이터 추출
+     */
+    private Claims parseRefreshClaims(String token) {
+        try {
+            return Jwts.parserBuilder().setSigningKey(refreshKey).build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
@@ -198,7 +236,7 @@ public class JwtUtil {
      * @param refreshToken 발급할 Refresh Tokens
      */
     public void issueRefreshToken(HttpServletResponse response, String refreshToken) {
-        Cookie cookie = new Cookie("refresh_token", refreshToken);
+        Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken);
 
         cookie.setHttpOnly(true);
         cookie.setSecure(true);

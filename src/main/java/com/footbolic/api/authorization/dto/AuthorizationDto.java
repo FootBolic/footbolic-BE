@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Schema(name = "Authorization 객체")
 @Data
@@ -19,9 +21,8 @@ public class AuthorizationDto {
 
     private String title;
 
-    private String roleId;
-
-    private RoleDto role;
+    @Builder.Default
+    private List<RoleDto> roles = new ArrayList<>();
 
     private String menuId;
 
@@ -43,10 +44,9 @@ public class AuthorizationDto {
         return AuthorizationEntity.builder()
                 .id(id)
                 .title(title)
-                .roleId(roleId)
-                .role(role == null ? null : role.toEntity())
                 .menuId(menuId)
                 .menu(menu == null ? null : menu.toEntity())
+                .roles(roles == null ? null : roles.stream().map(RoleDto::toEntity).toList())
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)
                 .createdBy(createdBy)

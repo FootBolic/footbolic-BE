@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         MemberDto member = Optional.ofNullable(jwtUtil.extractAccessToken(request))
-                .filter(jwtUtil::validateToken)
+                .filter(jwtUtil::validateAccessToken)
                 .map(jwtUtil::resolveAccessToken)
                 .filter(e -> e.getAccessTokenExpiresAt().isAfter(LocalDateTime.now()))
                 .filter(e -> e.getRoleId() != null && !e.getRoleId().isEmpty())
@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(member.getId());
 
             if (userDetails != null) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, member.getId(), userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }

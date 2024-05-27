@@ -22,7 +22,7 @@ public class MenuEntity extends ExtendedBaseEntity {
     private String parentId;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "parent_id", insertable = false, updatable = false)
     private List<MenuEntity> children = new ArrayList<>();
 
