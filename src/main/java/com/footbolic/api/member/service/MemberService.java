@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface MemberService {
 
-    List<MemberDto> findAll(Pageable pageable);
+    List<MemberDto> findAll(Pageable pageable, String searchNickname, String searchPlatform, String searchRoleId);
 
-    long count();
+    long count(String searchNickname, String searchPlatform, String searchRoleId);
 
     MemberDto findById(String id);
 

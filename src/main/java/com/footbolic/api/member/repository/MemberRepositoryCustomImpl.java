@@ -2,6 +2,7 @@ package com.footbolic.api.member.repository;
 
 import com.footbolic.api.member.entity.MemberEntity;
 import com.querydsl.core.types.Order;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,27 +28,50 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     private String KAKAO;
 
     @Override
-    public List<MemberEntity> findAllActiveMembers(Pageable pageable) {
-        String[] platforms = {NAVER, KAKAO};
-        return queryFactory.selectFrom(memberEntity)
-                .where(
-                        memberEntity.platform.in(Arrays.asList(platforms))
-                )
-                .offset(pageable.getOffset())
+    public List<MemberEntity> findAllActiveMembers(Pageable pageable, String searchNickname, String searchPlatform, String searchRoleId) {
+        JPAQuery<MemberEntity> query = queryFactory.selectFrom(memberEntity);
+
+        if (searchNickname != null && !searchNickname.isBlank()) {
+            query.where(memberEntity.nickname.contains(searchNickname));
+        }
+
+        if (searchRoleId != null && !searchRoleId.isBlank()) {
+            query.where(memberEntity.roleId.eq(searchRoleId));
+        }
+
+        if (searchPlatform != null && !searchPlatform.isBlank()) {
+            query.where(memberEntity.platform.eq(searchPlatform));
+        } else {
+            String[] platforms = {NAVER, KAKAO};
+            query.where(memberEntity.platform.in(Arrays.asList(platforms)));
+        }
+
+        return query.offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(memberEntity.id.desc())
                 .fetch();
     }
 
     @Override
-    public long countActiveMembers() {
-        String[] platforms = {NAVER, KAKAO};
-        return queryFactory.selectFrom(memberEntity)
-                .where(
-                        memberEntity.platform.in(Arrays.asList(platforms))
-                )
-                .fetch()
-                .size();
+    public long countActiveMembers(String searchNickname, String searchPlatform, String searchRoleId) {
+        JPAQuery<MemberEntity> query = queryFactory.selectFrom(memberEntity);
+
+        if (searchNickname != null && !searchNickname.isBlank()) {
+            query.where(memberEntity.nickname.contains(searchNickname));
+        }
+
+        if (searchRoleId != null && !searchRoleId.isBlank()) {
+            query.where(memberEntity.roleId.eq(searchRoleId));
+        }
+
+        if (searchPlatform != null && !searchPlatform.isBlank()) {
+            query.where(memberEntity.platform.eq(searchPlatform));
+        } else {
+            String[] platforms = {NAVER, KAKAO};
+            query.where(memberEntity.platform.in(Arrays.asList(platforms)));
+        }
+
+        return query.fetch().size();
     }
 
     @Override

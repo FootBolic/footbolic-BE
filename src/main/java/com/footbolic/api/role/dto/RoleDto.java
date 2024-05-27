@@ -21,6 +21,8 @@ public class RoleDto {
 
     private String title;
 
+    private boolean isDefault;
+
     @Builder.Default
     private List<MemberDto> members = new ArrayList<>();
 
@@ -43,7 +45,8 @@ public class RoleDto {
         return RoleEntity.builder()
                 .id(id)
                 .title(title)
-                .authorizations(authorizations == null ? null : authorizations.stream().map(AuthorizationDto::toEntity).toList())
+                .isDefault(isDefault)
+                .authorizations(authorizations.stream().map(AuthorizationDto::toEntity).toList())
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)
                 .createdBy(createdBy)

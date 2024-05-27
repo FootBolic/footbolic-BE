@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface MemberRepositoryCustom {
 
-    List<MemberEntity> findAllActiveMembers(Pageable pageable);
+    List<MemberEntity> findAllActiveMembers(Pageable pageable, String searchNickname, String searchPlatform, String searchRoleId);
 
-    long countActiveMembers();
+    long countActiveMembers(String searchNickname, String searchPlatform, String searchRoleId);
 
     MemberEntity findByIdAtPlatform(String idAtPlatform, String platform);
 

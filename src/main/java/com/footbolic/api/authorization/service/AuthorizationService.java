@@ -8,7 +8,9 @@ import java.util.List;
 
 public interface AuthorizationService {
 
-    List<AuthorizationDto> findAllAuthorizations(Pageable pageable);
+    List<AuthorizationDto> findAll(Pageable pageable, String searchTitle, String searchMenuId);
+
+    long count(String searchTitle, String searchMenuId);
 
     List<AuthorizationDto> findAllAuthorizationsByRole(RoleDto role);
 

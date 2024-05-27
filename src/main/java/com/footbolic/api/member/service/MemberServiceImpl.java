@@ -19,13 +19,14 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
 
     @Override
-    public List<MemberDto> findAll(Pageable pageable) {
-        return memberRepository.findAllActiveMembers(pageable).stream().map(MemberEntity::toDto).toList();
+    public List<MemberDto> findAll(Pageable pageable, String searchNickname, String searchPlatform, String searchRoleId) {
+        return memberRepository.findAllActiveMembers(pageable, searchNickname, searchPlatform, searchRoleId)
+                .stream().map(MemberEntity::toDto).toList();
     }
 
     @Override
-    public long count() {
-        return memberRepository.countActiveMembers();
+    public long count(String searchNickname, String searchPlatform, String searchRoleId) {
+        return memberRepository.countActiveMembers(searchNickname, searchPlatform, searchRoleId);
     }
 
     @Override

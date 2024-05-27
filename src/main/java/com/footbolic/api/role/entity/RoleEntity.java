@@ -2,6 +2,7 @@ package com.footbolic.api.role.entity;
 
 import com.footbolic.api.authorization.entity.AuthorizationEntity;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
+import com.footbolic.api.common.entity.map.AuthorizationRoleEntity;
 import com.footbolic.api.member.entity.MemberEntity;
 import com.footbolic.api.role.dto.RoleDto;
 import jakarta.persistence.*;
@@ -33,6 +34,10 @@ public class RoleEntity extends ExtendedBaseEntity {
     private List<MemberEntity> members = new ArrayList<>();
 
     @Builder.Default
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<AuthorizationRoleEntity> authorizationRoles = new ArrayList<>();
+
+    @Builder.Default
     @Transient
     private List<AuthorizationEntity> authorizations = new ArrayList<>();
 
@@ -40,8 +45,9 @@ public class RoleEntity extends ExtendedBaseEntity {
         return RoleDto.builder()
                 .id(getId())
                 .title(title)
+                .isDefault(isDefault)
                 .members(members.stream().map(MemberEntity::toDto).toList())
-                .authorizations(authorizations.stream().map(AuthorizationEntity::toDto).toList())
+                .authorizations(authorizationRoles.stream().map(AuthorizationRoleEntity::getAuthorization).map(AuthorizationEntity::toDto).toList())
                 .createdAt(getCreatedAt())
                 .createMemberId(getCreateMemberId())
                 .createdBy(getCreatedBy())

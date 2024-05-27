@@ -1,13 +1,19 @@
 package com.footbolic.api.authorization.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.footbolic.api.authorization.dto.AuthorizationDto;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
+import com.footbolic.api.common.entity.map.AuthorizationRoleEntity;
 import com.footbolic.api.menu.entity.MenuEntity;
 import com.footbolic.api.role.entity.RoleEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @SuperBuilder
@@ -19,12 +25,13 @@ public class AuthorizationEntity extends ExtendedBaseEntity {
     @Column(name = "title", nullable = false, length = 20)
     private String title;
 
-    @Column(name = "role_id", nullable = false, length = 30)
-    private String roleId;
+    @Builder.Default
+    @OneToMany(mappedBy = "authorization", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<AuthorizationRoleEntity> authorizationRoles = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id", insertable = false, updatable = false)
-    private RoleEntity role;
+    @Builder.Default
+    @Transient
+    private List<RoleEntity> roles = new ArrayList<>();
 
     @Column(name = "menu_id", nullable = false, length = 30)
     private String menuId;
@@ -37,8 +44,6 @@ public class AuthorizationEntity extends ExtendedBaseEntity {
         return AuthorizationDto.builder()
                 .id(getId())
                 .title(title)
-                .roleId(roleId)
-                .role(role == null ? null : role.toDto())
                 .menuId(menuId)
                 .menu(menu == null ? null : menu.toDto())
                 .createdAt(getCreatedAt())

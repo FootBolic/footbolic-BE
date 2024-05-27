@@ -63,10 +63,15 @@ public class MemberController {
     @Operation(summary = "회원 목록 조회", description = "회원 목록을 page 단위로 조회")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public SuccessResponse getMemberList(Pageable pageable) {
+    public SuccessResponse getMemberList(
+            Pageable pageable,
+            @RequestParam(name = "searchNickname", required = false) String searchNickname,
+            @RequestParam(name = "searchPlatform", required = false) String searchPlatform,
+            @RequestParam(name = "searchRoleId", required = false) String searchRoleId
+    ) {
         Map<String, Object> result = new HashMap<>();
-        result.put("members", memberService.findAll(pageable));
-        result.put("size", memberService.count());
+        result.put("members", memberService.findAll(pageable, searchNickname, searchPlatform, searchRoleId));
+        result.put("size", memberService.count(searchNickname, searchPlatform, searchRoleId));
 
         return new SuccessResponse(result);
     }
