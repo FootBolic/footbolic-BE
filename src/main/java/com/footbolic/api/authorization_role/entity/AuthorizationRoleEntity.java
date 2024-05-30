@@ -1,6 +1,7 @@
-package com.footbolic.api.common.entity.map;
+package com.footbolic.api.authorization_role.entity;
 
 import com.footbolic.api.authorization.entity.AuthorizationEntity;
+import com.footbolic.api.authorization_role.dto.AuthorizationRoleDto;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
 import com.footbolic.api.role.entity.RoleEntity;
 import jakarta.persistence.*;
@@ -28,4 +29,20 @@ public class AuthorizationRoleEntity extends ExtendedBaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", insertable = false, updatable = false)
     private RoleEntity role;
+
+    public AuthorizationRoleDto toDto() {
+        return AuthorizationRoleDto.builder()
+                .id(getId())
+                .authorizationId(authorizationId)
+                .authorization(authorization)
+                .roleId(roleId)
+                .role(role)
+                .createdAt(getCreatedAt())
+                .createMemberId(getCreateMemberId())
+                .createdBy(getCreatedBy())
+                .updatedAt(getUpdatedAt())
+                .updateMemberId(getUpdateMemberId())
+                .updatedBy(getUpdatedBy())
+                .build();
+    }
 }

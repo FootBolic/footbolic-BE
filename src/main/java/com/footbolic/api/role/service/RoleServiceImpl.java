@@ -16,8 +16,14 @@ public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
 
     @Override
-    public List<RoleDto> findAllRoles(Pageable pageable) {
-        return roleRepository.findAll(pageable).stream().map(RoleEntity::toDto).toList();
+    public List<RoleDto> findAll(Pageable pageable, String searchTitle, String searchAuthorizationId) {
+        return roleRepository.findAll(pageable, searchTitle, searchAuthorizationId)
+                .stream().map(RoleEntity::toDto).toList();
+    }
+
+    @Override
+    public long count(String searchTitle, String searchAuthorizationId) {
+        return roleRepository.count(searchTitle, searchAuthorizationId);
     }
 
     @Override
@@ -32,8 +38,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public RoleDto saveRole(RoleDto role) {
-        RoleEntity createdRole = roleRepository.save(role.toEntity());
-        return createdRole.toDto();
+        return roleRepository.save(role.toEntity()).toDto();
     }
 
     @Override

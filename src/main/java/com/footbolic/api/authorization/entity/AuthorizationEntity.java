@@ -1,9 +1,8 @@
 package com.footbolic.api.authorization.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.footbolic.api.authorization.dto.AuthorizationDto;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
-import com.footbolic.api.common.entity.map.AuthorizationRoleEntity;
+import com.footbolic.api.authorization_role.entity.AuthorizationRoleEntity;
 import com.footbolic.api.menu.entity.MenuEntity;
 import com.footbolic.api.role.entity.RoleEntity;
 import jakarta.persistence.*;

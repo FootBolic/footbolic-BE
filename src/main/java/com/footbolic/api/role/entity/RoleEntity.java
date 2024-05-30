@@ -2,7 +2,7 @@ package com.footbolic.api.role.entity;
 
 import com.footbolic.api.authorization.entity.AuthorizationEntity;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
-import com.footbolic.api.common.entity.map.AuthorizationRoleEntity;
+import com.footbolic.api.authorization_role.entity.AuthorizationRoleEntity;
 import com.footbolic.api.member.entity.MemberEntity;
 import com.footbolic.api.role.dto.RoleDto;
 import jakarta.persistence.*;

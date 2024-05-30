@@ -1,5 +1,6 @@
 package com.footbolic.api.role.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.footbolic.api.authorization.dto.AuthorizationDto;
 import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.member.entity.MemberEntity;
@@ -21,6 +22,7 @@ public class RoleDto {
 
     private String title;
 
+    @JsonProperty("isDefault")
     private boolean isDefault;
 
     @Builder.Default

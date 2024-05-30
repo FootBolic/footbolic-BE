@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,9 +32,20 @@ public class ExtendedBaseEntity extends BaseEntity {
     @Transient
     private MemberEntity updatedBy;
 
-//    @PreUpdate
-//    public void preUpdate() {
-//        this.update_member_id;
-//    }
+    @PrePersist
+    public void PrePersist() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            this.createMemberId = authentication.getCredentials().toString();
+        }
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            this.updateMemberId = authentication.getCredentials().toString();
+        }
+    }
 
 }

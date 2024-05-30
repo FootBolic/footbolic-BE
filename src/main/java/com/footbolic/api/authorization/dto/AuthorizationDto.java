@@ -1,5 +1,6 @@
 package com.footbolic.api.authorization.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.footbolic.api.authorization.entity.AuthorizationEntity;
 import com.footbolic.api.member.entity.MemberEntity;
 import com.footbolic.api.menu.dto.MenuDto;
@@ -39,6 +40,12 @@ public class AuthorizationDto {
     private String updateMemberId;
 
     private MemberEntity updatedBy;
+
+    @JsonProperty("isNew")
+    private boolean isNew;
+
+    @JsonProperty("isDeleted")
+    private boolean isDeleted;
 
     public AuthorizationEntity toEntity() {
         return AuthorizationEntity.builder()
