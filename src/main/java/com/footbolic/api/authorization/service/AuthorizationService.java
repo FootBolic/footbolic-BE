@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface AuthorizationService {
 
+    List<AuthorizationDto> findAll();
+
     List<AuthorizationDto> findAll(Pageable pageable, String searchTitle, String searchMenuId);
 
     long count(String searchTitle, String searchMenuId);

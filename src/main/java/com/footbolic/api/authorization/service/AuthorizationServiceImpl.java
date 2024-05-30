@@ -17,6 +17,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private final AuthorizationRepository authorizationRepository;
 
     @Override
+    public List<AuthorizationDto> findAll() {
+        return authorizationRepository.findAll().stream().map(AuthorizationEntity::toDto).toList();
+    }
+
+    @Override
     public List<AuthorizationDto> findAll(Pageable pageable, String searchTitle, String searchMenuId) {
         return authorizationRepository.findAll(pageable, searchTitle, searchMenuId)
                 .stream()
