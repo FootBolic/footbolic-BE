@@ -5,6 +5,8 @@ import com.footbolic.api.common.entity.ErrorResponse;
 import com.footbolic.api.common.entity.SuccessResponse;
 import com.footbolic.api.member.service.MemberService;
 import com.footbolic.api.member.dto.MemberDto;
+import com.footbolic.api.member_role.dto.MemberRoleDto;
+import com.footbolic.api.member_role.service.MemberRoleService;
 import com.footbolic.api.role.service.RoleService;
 import com.footbolic.api.util.HttpUtil;
 import com.footbolic.api.util.JwtUtil;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -37,9 +40,11 @@ import java.util.Map;
 @Slf4j
 public class MemberController {
 
+    private final MemberService memberService;
+
     private final RoleService roleService;
 
-    private final MemberService memberService;
+    private final MemberRoleService memberRoleService;
 
     private final JwtUtil jwtUtil;
 
@@ -83,8 +88,22 @@ public class MemberController {
             @RequestBody @Valid MemberDto member
     ) {
         member.setNicknameLastUpdatedAt(LocalDateTime.now());
-        member.setRoleId(roleService.findDefaultRole().getId());
-        return ResponseEntity.ok(new SuccessResponse(memberService.saveMember(member)));
+        MemberDto savedMember = memberService.saveMember(member);
+
+        roleService.findDefaultRoles().forEach(e -> {
+            MemberRoleDto memberRole = MemberRoleDto.builder()
+                    .memberId(savedMember.getId())
+                    .roleId(e.getId())
+                    .build();
+
+            memberRoleService.saveMemberRole(memberRole);
+        });
+
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("savedMember", memberService.findById(savedMember.getId()));
+
+        return ResponseEntity.ok(new SuccessResponse(result));
     }
 
     @Operation(summary = "회원 단건 조회", description = "회원 식별번호로 회원정보 조회")
@@ -93,6 +112,7 @@ public class MemberController {
             @PathVariable(name = "id") String id
     ) {
         MemberDto member = memberService.findById(id);
+
 
         if (member != null) {
             return ResponseEntity.ok(new SuccessResponse(member));
@@ -177,14 +197,31 @@ public class MemberController {
         } else if (memberService.existsById(paramMember.getId())) {
             MemberDto member = memberService.findById(paramMember.getId());
 
-            if (member.getNickname().equals(paramMember.getNickname())) {
+            if (member.getNickname().equals(paramMember.getNickname())
+                    && member.getRoles().equals(paramMember.getRoles())) {
                 return ResponseEntity.badRequest().body(new ErrorResponse("변경된 정보가 없습니다."));
             } else {
-                member.setNickname(paramMember.getNickname());
-                member.setNicknameLastUpdatedAt(LocalDateTime.now());
-                MemberDto updatedMember = memberService.saveMember(member);
+                paramMember.getRoles().forEach(role -> {
+                    if (role.isNew() && !role.isDeleted()) {
+                        memberRoleService.saveMemberRole(MemberRoleDto.builder()
+                                .memberId(member.getId())
+                                .roleId(role.getId())
+                                .build());
+                    } else if (!role.isNew() && role.isDeleted()) {
+                        memberRoleService.deleteByMemberIdAndRoleId(member.getId(), role.getId());
+                    }
+                });
 
-                return ResponseEntity.ok(new SuccessResponse(updatedMember));
+                if (!member.getNickname().equals(paramMember.getNickname())) {
+                    member.setNickname(paramMember.getNickname());
+                    member.setNicknameLastUpdatedAt(LocalDateTime.now());
+                    memberService.saveMember(member);
+                }
+
+                Map<String, Object> result = new HashMap<>();
+                result.put("updatedMember", memberService.findById(member.getId()));
+
+                return ResponseEntity.ok(new SuccessResponse(result));
             }
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("조회된 회원이 없습니다"));
@@ -214,9 +251,11 @@ public class MemberController {
             } else {
                 member.setNickname(paramMember.getNickname());
                 member.setNicknameLastUpdatedAt(LocalDateTime.now());
-                MemberDto updatedMember = memberService.saveMember(member);
 
-                return ResponseEntity.ok(new SuccessResponse(updatedMember));
+                Map<String, Object> result = new HashMap<>();
+                result.put("updatedMember", memberService.saveMember(member));
+
+                return ResponseEntity.ok(new SuccessResponse(result));
             }
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("조회된 회원이 없습니다"));
@@ -264,6 +303,7 @@ public class MemberController {
                 if (httpResponse == null) {
                     return ResponseEntity.badRequest().body(new ErrorResponse("서버와의 통신이 원활하지 않습니다."));
                 } else {
+                    memberRoleService.deleteAllByMemberId(id);
                     memberService.withdraw(member);
 
                     Map<String, String> result = new HashMap<>();

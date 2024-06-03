@@ -16,12 +16,11 @@ public class MenuRepositoryCustomImpl implements MenuRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<MenuEntity> findAllMenus() {
+    public List<MenuEntity> findAll() {
         return queryFactory
                 .selectFrom(menuEntity)
-                .where(
-                        menuEntity.parentId.isNull()
-                )
+                .where(menuEntity.parentId.isNull())
+                .orderBy(menuEntity.order.asc(), menuEntity.id.desc())
                 .fetch();
     }
 
@@ -33,6 +32,7 @@ public class MenuRepositoryCustomImpl implements MenuRepositoryCustom {
                         menuEntity.parentId.isNull()
                                 .and(menuEntity.isUsed).eq(true)
                 )
+                .orderBy(menuEntity.order.asc(), menuEntity.id.desc())
                 .fetch();
     }
 

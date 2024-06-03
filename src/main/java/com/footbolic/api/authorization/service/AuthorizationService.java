@@ -12,9 +12,9 @@ public interface AuthorizationService {
 
     List<AuthorizationDto> findAll(Pageable pageable, String searchTitle, String searchMenuId);
 
-    long count(String searchTitle, String searchMenuId);
+    List<AuthorizationDto> findAllByRoleIds(List<String> roleIds);
 
-    List<AuthorizationDto> findAllAuthorizationsByRole(RoleDto role);
+    long count(String searchTitle, String searchMenuId);
 
     AuthorizationDto findById(String id);
 

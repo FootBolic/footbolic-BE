@@ -1,6 +1,8 @@
 package com.footbolic.api.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.footbolic.api.member.dto.MemberDto;
+import com.footbolic.api.role.dto.RoleDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -15,7 +17,9 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -86,10 +90,17 @@ public class JwtUtil {
      * 회원정보로 AccessToken 생성
      */
     public String generateAccessToken(MemberDto member, Date expiration) {
+        member.setRoles(member.getRoles().stream().map(e -> RoleDto.builder()
+                .id(e.getId())
+                .title(e.getTitle())
+                .code(e.getCode())
+                .build()
+        ).toList());
+
         return Jwts.builder()
                 .setSubject(member.getNickname())
                 .claim(ID_CLAIM, member.getId())
-                .claim(AUTH_CLAIM, member.getRoleId())
+                .claim(AUTH_CLAIM, member.getRoles())
                 .claim(PLATFORM_CLAIM, member.getPlatform())
                 .claim(ID_AT_PROVIDER_CLAIM, member.getIdAtProvider())
                 .setIssuedAt(new Date())
@@ -114,9 +125,20 @@ public class JwtUtil {
                 .id(claims.get(ID_CLAIM).toString())
                 .platform(claims.get(PLATFORM_CLAIM).toString())
                 .idAtProvider(claims.get(ID_AT_PROVIDER_CLAIM).toString())
-                .roleId(claims.get(AUTH_CLAIM).toString())
+                .roles(parseRoles(claims.get(AUTH_CLAIM)))
                 .accessTokenExpiresAt(LocalDateTime.ofInstant(claims.getExpiration().toInstant(), ZoneId.systemDefault()))
                 .build();
+    }
+
+    private List<RoleDto> parseRoles(Object authClaim) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String json = objectMapper.writeValueAsString(authClaim);
+            return objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(List.class, RoleDto.class));
+        } catch (Exception e) {
+            log.error("Failed to parse roles from claims", e);
+            throw new IllegalArgumentException("Failed to parse roles from claims", e);
+        }
     }
 
     /**

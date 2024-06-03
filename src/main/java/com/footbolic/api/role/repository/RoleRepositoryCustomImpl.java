@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.footbolic.api.authorization_role.entity.QAuthorizationRoleEntity.authorizationRoleEntity;
+import static com.footbolic.api.member_role.entity.QMemberRoleEntity.memberRoleEntity;
 import static com.footbolic.api.role.entity.QRoleEntity.roleEntity;
 
 @Repository
@@ -38,6 +39,12 @@ public class RoleRepositoryCustomImpl implements RoleRepositoryCustom {
     }
 
     @Override
+    public List<RoleEntity> findAllByMemberId(String memberId) {
+        return queryFactory.selectFrom(roleEntity).leftJoin(roleEntity.memberRoles, memberRoleEntity)
+                .where(memberRoleEntity.memberId.eq(memberId)).fetch();
+    }
+
+    @Override
     public long count(String searchTitle, String searchAuthorizationId) {
         JPAQuery<RoleEntity> query = queryFactory.selectFrom(roleEntity);
 
@@ -54,12 +61,12 @@ public class RoleRepositoryCustomImpl implements RoleRepositoryCustom {
     }
 
     @Override
-    public RoleEntity findDefaultRole() {
+    public List<RoleEntity> findDefaultRoles() {
         return queryFactory.selectFrom(roleEntity)
                 .where(
                         roleEntity.isDefault.eq(true)
                 )
                 .orderBy(roleEntity.id.asc())
-                .fetchFirst();
+                .fetch();
     }
 }

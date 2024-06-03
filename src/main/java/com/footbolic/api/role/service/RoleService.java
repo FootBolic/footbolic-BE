@@ -8,13 +8,17 @@ import java.util.List;
 
 public interface RoleService {
 
+    List<RoleDto> findAll();
+
     List<RoleDto> findAll(Pageable pageable, String searchTitle, String searchAuthorizationId);
+
+    List<RoleDto> findAllByMemberId(String memberId);
 
     long count(String searchTitle, String searchAuthorizationId);
 
     RoleDto findById(String id);
 
-    RoleDto findDefaultRole();
+    List<RoleDto> findDefaultRoles();
 
     RoleDto saveRole(RoleDto role);
 

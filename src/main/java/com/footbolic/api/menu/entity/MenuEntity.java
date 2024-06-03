@@ -3,12 +3,14 @@ package com.footbolic.api.menu.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
 import com.footbolic.api.menu.dto.MenuDto;
+import com.footbolic.api.program.entity.ProgramEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Getter
@@ -24,10 +26,18 @@ public class MenuEntity extends ExtendedBaseEntity {
     @Builder.Default
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "parent_id", insertable = false, updatable = false)
+    @OrderBy(" order ASC, id DESC ")
     private List<MenuEntity> children = new ArrayList<>();
 
     @Column(name = "title", nullable = false, length = 20)
     private String title;
+
+    @Column(name = "program_id", length = 30)
+    private String programId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "program_id", insertable = false, updatable = false)
+    private ProgramEntity program;
 
     @Column(name = "path", length = 100)
     private String path;
@@ -39,6 +49,10 @@ public class MenuEntity extends ExtendedBaseEntity {
     @Column(name = "is_used", columnDefinition = "TINYINT(1)", nullable = false)
     private boolean isUsed;
 
+    @ColumnDefault("0")
+    @Column(name = "order_no", nullable = false)
+    private long order;
+
     public MenuDto toDto() {
         return MenuDto.builder()
                 .id(getId())
@@ -48,12 +62,13 @@ public class MenuEntity extends ExtendedBaseEntity {
                 .path(path)
                 .iconCodeId(iconCodeId)
                 .isUsed(isUsed)
+                .order(order)
                 .createdAt(getCreatedAt())
                 .createMemberId(getCreateMemberId())
-                .createdBy(getCreatedBy())
+                .createdBy(getCreatedBy() == null ? null : getCreatedBy().toDto())
                 .updatedAt(getUpdatedAt())
                 .updateMemberId(getUpdateMemberId())
-                .updatedBy(getUpdatedBy())
+                .updatedBy(getUpdatedBy() == null ? null : getUpdatedBy().toDto())
                 .build();
     }
 

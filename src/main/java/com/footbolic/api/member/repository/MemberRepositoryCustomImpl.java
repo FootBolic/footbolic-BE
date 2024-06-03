@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.footbolic.api.member.entity.QMemberEntity.memberEntity;
+import static com.footbolic.api.member_role.entity.QMemberRoleEntity.memberRoleEntity;
 
 @Repository
 @RequiredArgsConstructor
@@ -36,7 +37,8 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
         }
 
         if (searchRoleId != null && !searchRoleId.isBlank()) {
-            query.where(memberEntity.roleId.eq(searchRoleId));
+            query.innerJoin(memberEntity.memberRoles, memberRoleEntity)
+                    .where(memberRoleEntity.roleId.eq(searchRoleId));
         }
 
         if (searchPlatform != null && !searchPlatform.isBlank()) {
@@ -61,7 +63,8 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
         }
 
         if (searchRoleId != null && !searchRoleId.isBlank()) {
-            query.where(memberEntity.roleId.eq(searchRoleId));
+            query.innerJoin(memberEntity.memberRoles, memberRoleEntity)
+                    .where(memberRoleEntity.roleId.eq(searchRoleId));
         }
 
         if (searchPlatform != null && !searchPlatform.isBlank()) {
@@ -98,7 +101,6 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
         queryFactory.update(memberEntity)
                 .set(memberEntity.refreshToken, member.getRefreshToken())
                 .set(memberEntity.refreshTokenExpiresAt, member.getRefreshTokenExpiresAt())
-                .set(memberEntity.updatedAt, LocalDateTime.now())
                 .where(memberEntity.id.eq(member.getId()))
                 .execute();
     }

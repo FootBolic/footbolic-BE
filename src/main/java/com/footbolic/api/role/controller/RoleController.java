@@ -46,6 +46,16 @@ public class RoleController {
         return new SuccessResponse(result);
     }
 
+    @Operation(summary = "역할 목록 조회", description = "역할 목록을 page 단위로 조회")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/all")
+    public SuccessResponse getAllRoleList() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("roles", roleService.findAll());
+
+        return new SuccessResponse(result);
+    }
+
     @Operation(summary = "역할 생성", description = "파라미터로 전달 받은 역할를 생성")
     @Parameter(name = "role", description = "생성할 역할 객체", required = true)
     @PostMapping
@@ -94,13 +104,12 @@ public class RoleController {
         } else if (roleService.existsById(role.getId())) {
             role.getAuthorizations().forEach(auth -> {
                 if (auth.isNew() && !auth.isDeleted()) {
-                    AuthorizationRoleDto authRole = AuthorizationRoleDto.builder()
+                    authorizationRoleService.saveAuthorizationRole(AuthorizationRoleDto.builder()
                             .roleId(role.getId())
                             .authorizationId(auth.getId())
-                            .build();
-                    authorizationRoleService.saveAuthorizationRole(authRole);
+                            .build());
                 } else if (!auth.isNew() && auth.isDeleted()) {
-                    authorizationRoleService.deleteByRoleAndAuthorization(role.getId(), auth.getId());
+                    authorizationRoleService.deleteByAuthorizationIdAndRoleId(auth.getId(), role.getId());
                 }
             });
 

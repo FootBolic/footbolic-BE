@@ -13,10 +13,12 @@ public class AuthorizationRoleRepositoryCustomImpl implements AuthorizationRoleR
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public void deleteByRoleAndAuthorization(String roleId, String authorizationId) {
-        queryFactory.delete(authorizationRoleEntity).where(
-                authorizationRoleEntity.roleId.eq(roleId)
-                        .and(authorizationRoleEntity.authorizationId.eq(authorizationId))
-        ).execute();
+    public void deleteByAuthorizationIdAndRoleId(String authorizationId, String roleId) {
+        queryFactory.delete(authorizationRoleEntity)
+                .where(
+                    authorizationRoleEntity.authorizationId.eq(authorizationId)
+                            .and(authorizationRoleEntity.roleId.eq(roleId))
+                )
+                .execute();
     }
 }

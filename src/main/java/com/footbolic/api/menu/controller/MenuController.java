@@ -1,19 +1,30 @@
 package com.footbolic.api.menu.controller;
 
+import com.footbolic.api.authorization.dto.AuthorizationDto;
+import com.footbolic.api.authorization.service.AuthorizationService;
 import com.footbolic.api.common.entity.BaseResponse;
 import com.footbolic.api.common.entity.ErrorResponse;
 import com.footbolic.api.common.entity.SuccessResponse;
+import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.menu.dto.MenuDto;
 import com.footbolic.api.menu.service.MenuService;
+import com.footbolic.api.role.dto.RoleDto;
+import com.footbolic.api.role.service.RoleService;
+import com.footbolic.api.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Tag(name = "메뉴 API")
 @RequestMapping("/menus")
@@ -24,17 +35,47 @@ public class MenuController {
 
     private final MenuService menuService;
 
+    private final AuthorizationService authorizationService;
+
+    private final RoleService roleService;
+
+    private final JwtUtil jwtUtil;
+
     @Operation(summary = "메뉴 목록 조회", description = "메뉴 목록을 트리 형태로 조회")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public SuccessResponse getMenuList(
             @RequestParam(required = false) Boolean isUsed
     ) {
-        if (isUsed != null && isUsed) {
-            return new SuccessResponse(menuService.findUsedMenus());
-        } else {
-            return new SuccessResponse(menuService.findAllMenus());
-        }
+        List<MenuDto> menus = menuService.findAll();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("menus", menus);
+
+        return new SuccessResponse(result);
+    }
+
+    @Operation(summary = "회원이 권한을 가진 메뉴 목록 조회", description = "회원이 권한을 가진 메뉴 목록을 트리 형태로 조회한다")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/public")
+    public SuccessResponse getMenuListByAuth(
+            HttpServletRequest request
+    ) {
+        String accessToken = jwtUtil.extractAccessToken(request);
+
+        List<RoleDto> roles = accessToken == null ? roleService.findDefaultRoles()
+                : jwtUtil.resolveAccessToken(accessToken).getRoles();
+
+        List<MenuDto> menus = menuService.findAllByAuthorizations(
+                authorizationService.findAllByRoleIds(
+                        roles.stream().map(RoleDto::getId).toList()
+                )
+        );
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("menus", menus);
+
+        return new SuccessResponse(result);
     }
 
     @Operation(summary = "메뉴 생성", description = "파라미터로 전달 받은 메뉴를 생성")
@@ -44,7 +85,11 @@ public class MenuController {
             @RequestBody @Valid MenuDto menu
     ) {
         MenuDto createdMenu = menuService.saveMenu(menu);
-        return ResponseEntity.ok(new SuccessResponse(createdMenu));
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("createdMenu", createdMenu);
+
+        return ResponseEntity.ok(new SuccessResponse(result));
     }
 
     @Operation(summary = "메뉴 단건 조회", description = "전달 받은 식별번호를 가진 메뉴 조회")
@@ -59,7 +104,10 @@ public class MenuController {
             MenuDto menu = menuService.findById(id);
 
             if (menu != null) {
-                return ResponseEntity.ok(new SuccessResponse(menu));
+                Map<String, Object> result = new HashMap<>();
+                result.put("menu", menu);
+
+                return ResponseEntity.ok(new SuccessResponse(result));
             } else {
                 return ResponseEntity.badRequest().body(new ErrorResponse("존재하지 않는 메뉴입니다."));
             }
@@ -76,7 +124,11 @@ public class MenuController {
             return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 메뉴 식별번호입니다."));
         } else if (menuService.existsById(menu.getId())) {
             MenuDto updatedMenu = menuService.saveMenu(menu);
-            return ResponseEntity.ok(new SuccessResponse(updatedMenu));
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("updatedMenu", updatedMenu);
+
+            return ResponseEntity.ok(new SuccessResponse(result));
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("존재하지 않는 메뉴입니다."));
         }
@@ -92,7 +144,11 @@ public class MenuController {
             return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 메뉴 식별번호입니다."));
         } else if (menuService.existsById(id)) {
             menuService.deleteMenu(id);
-            return ResponseEntity.ok(new SuccessResponse(null));
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("id", id);
+
+            return ResponseEntity.ok(new SuccessResponse(result));
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("존재하지 않는 메뉴입니다."));
         }

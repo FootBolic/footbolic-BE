@@ -36,6 +36,7 @@ public class WebSecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/sign/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/members/public/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/members", "POST")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/menus/public/**")).permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();

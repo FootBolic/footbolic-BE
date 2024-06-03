@@ -1,14 +1,12 @@
-package com.footbolic.api.role.dto;
+package com.footbolic.api.program.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.footbolic.api.authorization.dto.AuthorizationDto;
 import com.footbolic.api.member.dto.MemberDto;
-import com.footbolic.api.member.entity.MemberEntity;
-import com.footbolic.api.role.entity.RoleEntity;
+import com.footbolic.api.menu.dto.MenuDto;
+import com.footbolic.api.program.entity.ProgramEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,12 +17,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Schema(name = "역할 DTO")
+@Schema(name = "프로그램 DTO")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoleDto {
+public class ProgramDto {
 
     private String id;
 
@@ -32,14 +30,8 @@ public class RoleDto {
 
     private String code;
 
-    @JsonProperty("isDefault")
-    private boolean isDefault;
-
     @Builder.Default
-    private List<MemberDto> members = new ArrayList<>();
-
-    @Builder.Default
-    private List<AuthorizationDto> authorizations = new ArrayList<>();
+    private List<MenuDto> menus = new ArrayList<>();
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -57,20 +49,12 @@ public class RoleDto {
 
     private MemberDto updatedBy;
 
-    @JsonProperty("isNew")
-    private boolean isNew;
-
-    @JsonProperty("isDeleted")
-    private boolean isDeleted;
-
-    public RoleEntity toEntity() {
-        return RoleEntity.builder()
+    public ProgramEntity toEntity() {
+        return ProgramEntity.builder()
                 .id(id)
                 .title(title)
                 .code(code)
-                .isDefault(isDefault)
-                .members(members == null ? null : members.stream().map(MemberDto::toEntity).toList())
-                .authorizations(authorizations == null ? null : authorizations.stream().map(AuthorizationDto::toEntity).toList())
+                .menus(menus == null ? null : menus.stream().map(MenuDto::toEntity).toList())
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)
                 .createdBy(createdBy == null ? null : createdBy.toEntity())

@@ -44,7 +44,7 @@ public class AuthorizationController {
         return new SuccessResponse(result);
     }
 
-    @Operation(summary = "권한 목록 조회", description = "권한 목록을 page 단위로 조회")
+    @Operation(summary = "전체 권한 목록 조회", description = "전체 권한 목록을 조회한다.")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/all")
     public SuccessResponse getAllAuthorizationList() {

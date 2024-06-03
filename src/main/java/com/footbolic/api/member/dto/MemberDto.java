@@ -1,26 +1,33 @@
 package com.footbolic.api.member.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.footbolic.api.member.entity.MemberEntity;
 import com.footbolic.api.role.dto.RoleDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Schema(name = "Member 객체")
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemberDto {
 
     private String id;
 
-    private String roleId;
-
-    private RoleDto role;
+    @Builder.Default
+    private List<RoleDto> roles = new ArrayList<>();
 
     private String nickname;
 
@@ -40,15 +47,18 @@ public class MemberDto {
     @DateTimeFormat(pattern="yyyy-MM-ddTHH:mm:ss")
     private LocalDateTime accessTokenExpiresAt;
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createdAt;
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime updatedAt;
 
     public MemberEntity toEntity() {
         return MemberEntity.builder()
                 .id(id)
-                .roleId(roleId)
-                .role(role == null ? null : role.toEntity())
+                .roles(roles == null ? null : roles.stream().map(RoleDto::toEntity).toList())
                 .nickname(nickname)
                 .idAtProvider(idAtProvider)
                 .platform(platform)
