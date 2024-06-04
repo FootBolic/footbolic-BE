@@ -1,5 +1,7 @@
 package com.footbolic.api.menu.controller;
 
+import com.footbolic.api.annotation.RoleCheck;
+import com.footbolic.api.annotation.RoleCode;
 import com.footbolic.api.authorization.service.AuthorizationService;
 import com.footbolic.api.common.entity.BaseResponse;
 import com.footbolic.api.common.entity.ErrorResponse;
@@ -77,6 +79,10 @@ public class MenuController {
 
     @Operation(summary = "메뉴 생성", description = "파라미터로 전달 받은 메뉴를 생성")
     @Parameter(name = "menu", description = "생성할 메뉴 객체", required = true)
+    @RoleCheck(codes = {
+//            @RoleCode(code = RoleCode.ROLE_SYS_MNG),
+            @RoleCode(code = RoleCode.ROLE_MENU_MNG)
+    })
     @PostMapping
     public ResponseEntity<BaseResponse> createMenu(
             @RequestBody @Valid MenuDto menu
