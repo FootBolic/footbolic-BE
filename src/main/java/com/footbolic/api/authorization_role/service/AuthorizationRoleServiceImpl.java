@@ -19,7 +19,7 @@ public class AuthorizationRoleServiceImpl implements AuthorizationRoleService {
     }
 
     @Override
-    public void deleteByRoleAndAuthorization(String roleId, String authorizationId) {
-        authorizationRoleRepository.deleteByRoleAndAuthorization(roleId, authorizationId);
+    public void deleteByAuthorizationIdAndRoleId(String authorizationId, String roleId) {
+        authorizationRoleRepository.deleteByAuthorizationIdAndRoleId(authorizationId, roleId);
     }
 }

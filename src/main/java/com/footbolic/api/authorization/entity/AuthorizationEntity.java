@@ -47,10 +47,10 @@ public class AuthorizationEntity extends ExtendedBaseEntity {
                 .menu(menu == null ? null : menu.toDto())
                 .createdAt(getCreatedAt())
                 .createMemberId(getCreateMemberId())
-                .createdBy(getCreatedBy())
+                .createdBy(getCreatedBy() == null ? null : getCreatedBy().toDto())
                 .updatedAt(getUpdatedAt())
                 .updateMemberId(getUpdateMemberId())
-                .updatedBy(getUpdatedBy())
+                .updatedBy(getUpdatedBy() == null ? null : getUpdatedBy().toDto())
                 .build();
     }
 

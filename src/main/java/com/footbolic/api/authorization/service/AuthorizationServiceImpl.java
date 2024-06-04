@@ -1,10 +1,11 @@
 package com.footbolic.api.authorization.service;
 
-import com.footbolic.api.authorization.repository.AuthorizationRepository;
 import com.footbolic.api.authorization.dto.AuthorizationDto;
 import com.footbolic.api.authorization.entity.AuthorizationEntity;
-import com.footbolic.api.role.dto.RoleDto;
+import com.footbolic.api.authorization.repository.AuthorizationRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthorizationServiceImpl implements AuthorizationService {
 
     private final AuthorizationRepository authorizationRepository;
@@ -30,16 +32,17 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public long count(String searchTitle, String searchMenuId) {
-        return authorizationRepository.count(searchTitle, searchMenuId);
+    public List<AuthorizationDto> findAllByRoleIds(List<String> roleIds) {
+        return authorizationRepository.findAllByRoleIds(roleIds)
+                .stream()
+                .map(AuthorizationEntity::toDto)
+                .toList();
     }
 
     @Override
-    public List<AuthorizationDto> findAllAuthorizationsByRole(RoleDto role) {
-        return authorizationRepository.findAllAuthorizationsByRole(role.toEntity())
-                .stream().map(AuthorizationEntity::toDto).toList();
+    public long count(String searchTitle, String searchMenuId) {
+        return authorizationRepository.count(searchTitle, searchMenuId);
     }
-
 
     @Override
     public AuthorizationDto findById(String id) {

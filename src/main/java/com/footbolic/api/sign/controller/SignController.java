@@ -5,6 +5,7 @@ import com.footbolic.api.common.entity.ErrorResponse;
 import com.footbolic.api.common.entity.SuccessResponse;
 import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.member.service.MemberService;
+import com.footbolic.api.role.service.RoleService;
 import com.footbolic.api.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,6 +34,8 @@ public class SignController {
 
     private final MemberService memberService;
 
+    private final RoleService roleService;
+
     private final JwtUtil jwtUtil;
 
     @Operation(summary = "로그인 처리 및 토큰 발급", description = "로그인 처리 후 access token과 refresh token을 발급한다.")
@@ -51,6 +54,7 @@ public class SignController {
 
         if (memberService.existsByIdAtPlatform(paramMember.getIdAtProvider(), paramMember.getPlatform())) {
             MemberDto member = memberService.findByIdAtPlatform(paramMember.getIdAtProvider(), paramMember.getPlatform());
+            member.setRoles(roleService.findAllByMemberId(member.getId()));
 
             Map<String, Object> result = new HashMap<>();
 
@@ -86,7 +90,7 @@ public class SignController {
                 .filter(jwtUtil::validateAccessToken)
                 .map(jwtUtil::resolveAccessToken)
                 .filter(e -> e.getAccessTokenExpiresAt().isAfter(LocalDateTime.now()))
-                .filter(e -> e.getRoleId() != null && !e.getRoleId().isEmpty())
+                .filter(e -> e.getRoles() != null && !e.getRoles().isEmpty())
                 .orElse(null);
 
         if (member != null) {

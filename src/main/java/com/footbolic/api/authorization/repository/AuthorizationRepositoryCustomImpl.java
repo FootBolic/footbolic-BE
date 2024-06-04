@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.footbolic.api.authorization.entity.QAuthorizationEntity.authorizationEntity;
+import static com.footbolic.api.authorization_role.entity.QAuthorizationRoleEntity.authorizationRoleEntity;
+import static com.footbolic.api.role.entity.QRoleEntity.roleEntity;
 
 @Repository
 @RequiredArgsConstructor
@@ -53,8 +55,14 @@ public class AuthorizationRepositoryCustomImpl implements AuthorizationRepositor
     }
 
     @Override
-    public List<AuthorizationEntity> findAllAuthorizationsByRole(RoleEntity role) {
-        return queryFactory.selectFrom(authorizationEntity).fetch();
-//                .where(authorizationEntity.roleId.eq(role.getId())).fetch();
+    public List<AuthorizationEntity> findAllByRoleIds(List<String> roleIds) {
+        return queryFactory.selectDistinct(authorizationEntity)
+                .from(authorizationEntity)
+                .innerJoin(authorizationEntity.authorizationRoles, authorizationRoleEntity)
+                .innerJoin(authorizationRoleEntity.role, roleEntity)
+                .where(
+                        roleEntity.id.in(roleIds)
+                )
+                .fetch();
     }
 }

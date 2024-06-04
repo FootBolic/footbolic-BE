@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .filter(jwtUtil::validateAccessToken)
                 .map(jwtUtil::resolveAccessToken)
                 .filter(e -> e.getAccessTokenExpiresAt().isAfter(LocalDateTime.now()))
-                .filter(e -> e.getRoleId() != null && !e.getRoleId().isEmpty())
+                .filter(e -> e.getRoles() != null && !e.getRoles().isEmpty())
                 .orElse(null);
 
         if (member != null && SecurityContextHolder.getContext().getAuthentication() == null) {

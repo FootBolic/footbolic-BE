@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
-//		(exclude = {SecurityAutoConfiguration.class})
+		(exclude = {SecurityAutoConfiguration.class})
 public class FootbolicApplication {
 
 	public static void main(String[] args) {

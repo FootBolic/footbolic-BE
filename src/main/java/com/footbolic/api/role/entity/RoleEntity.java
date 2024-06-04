@@ -4,6 +4,7 @@ import com.footbolic.api.authorization.entity.AuthorizationEntity;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
 import com.footbolic.api.authorization_role.entity.AuthorizationRoleEntity;
 import com.footbolic.api.member.entity.MemberEntity;
+import com.footbolic.api.member_role.entity.MemberRoleEntity;
 import com.footbolic.api.role.dto.RoleDto;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -11,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +22,21 @@ import java.util.List;
 @NoArgsConstructor
 @Entity(name = "RoleEntity")
 @Table(name = "Role")
-public class RoleEntity extends ExtendedBaseEntity {
+public class RoleEntity extends ExtendedBaseEntity implements GrantedAuthority {
 
     @Column(name = "title", nullable = false, length = 20)
     private String title;
 
+    @Column(name = "code", nullable = false, length = 20, unique = true)
+    private String code;
+
     @ColumnDefault("false")
     @Column(name = "is_default", columnDefinition = "TINYINT(1)", nullable = false)
     private boolean isDefault;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<MemberRoleEntity> memberRoles = new ArrayList<>();
 
     @Builder.Default
     @Transient
@@ -45,16 +54,20 @@ public class RoleEntity extends ExtendedBaseEntity {
         return RoleDto.builder()
                 .id(getId())
                 .title(title)
+                .code(code)
                 .isDefault(isDefault)
-                .members(members.stream().map(MemberEntity::toDto).toList())
                 .authorizations(authorizationRoles.stream().map(AuthorizationRoleEntity::getAuthorization).map(AuthorizationEntity::toDto).toList())
                 .createdAt(getCreatedAt())
                 .createMemberId(getCreateMemberId())
-                .createdBy(getCreatedBy())
+                .createdBy(getCreatedBy() == null ? null : getCreatedBy().toDto())
                 .updatedAt(getUpdatedAt())
                 .updateMemberId(getUpdateMemberId())
-                .updatedBy(getUpdatedBy())
+                .updatedBy(getUpdatedBy() == null ? null : getUpdatedBy().toDto())
                 .build();
     }
 
+    @Override
+    public String getAuthority() {
+        return this.code;
+    }
 }

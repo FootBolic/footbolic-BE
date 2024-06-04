@@ -6,5 +6,5 @@ public interface AuthorizationRoleService {
 
     AuthorizationRoleDto saveAuthorizationRole(AuthorizationRoleDto authorizationRole);
 
-    void deleteByRoleAndAuthorization(String roleId, String authorizationId);
+    void deleteByAuthorizationIdAndRoleId(String authorizationId, String roleId);
 }

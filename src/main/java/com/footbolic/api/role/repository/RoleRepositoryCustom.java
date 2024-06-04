@@ -9,8 +9,10 @@ public interface RoleRepositoryCustom {
 
     List<RoleEntity> findAll(Pageable pageable, String searchTitle, String searchAuthorizationId);
 
+    List<RoleEntity> findAllByMemberId(String memberId);
+
     long count(String searchTitle, String searchAuthorizationId);
 
-    RoleEntity findDefaultRole();
+    List<RoleEntity> findDefaultRoles();
 
 }

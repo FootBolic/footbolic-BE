@@ -1,9 +1,11 @@
 package com.footbolic.api.menu.service;
 
+import com.footbolic.api.authorization.dto.AuthorizationDto;
 import com.footbolic.api.menu.dto.MenuDto;
 import com.footbolic.api.menu.entity.MenuEntity;
 import com.footbolic.api.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +17,27 @@ public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
 
     @Override
-    public List<MenuDto> findAllMenus() {
-        return menuRepository.findAllMenus().stream().map(MenuEntity::toDto).toList();
+    public List<MenuDto> findAll() {
+        return menuRepository.findAll().stream().map(MenuEntity::toDto).toList();
     }
 
     @Override
-    public List<MenuDto> findUsedMenus() {
-        return menuRepository.findUsedMenus().stream().map(MenuEntity::toDto).toList();
+    public List<MenuDto> findAllByAuthorizations(List<AuthorizationDto> authorizations) {
+        List<MenuDto> allMenus = findAll();
+        List<String> menuIds = authorizations.stream().map(AuthorizationDto::getMenuId).toList();
+        return filterByAuth(allMenus, menuIds);
+    }
+
+    private List<MenuDto> filterByAuth(List<MenuDto> menus, List<String> targets) {
+        return menus.stream()
+                .filter(MenuDto::isUsed)
+                .filter(menu -> targets.contains(menu.getId()))
+                .peek(menu -> {
+                    if (!menu.getChildren().isEmpty()) {
+                        menu.setChildren(filterByAuth(menu.getChildren(), targets));
+                    }
+                })
+                .toList();
     }
 
     @Override
@@ -37,7 +53,11 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void deleteMenu(String id) {
-        menuRepository.deleteById(id);
+        try {
+            menuRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(e.getMessage());
+        }
     }
 
     @Override

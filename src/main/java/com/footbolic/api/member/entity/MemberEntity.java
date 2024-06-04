@@ -2,6 +2,7 @@ package com.footbolic.api.member.entity;
 
 import com.footbolic.api.common.entity.BaseEntity;
 import com.footbolic.api.member.dto.MemberDto;
+import com.footbolic.api.member_role.entity.MemberRoleEntity;
 import com.footbolic.api.notification.entity.NotificationEntity;
 import com.footbolic.api.role.entity.RoleEntity;
 import jakarta.persistence.*;
@@ -21,12 +22,13 @@ import java.util.List;
 @Table(name = "Member")
 public class MemberEntity extends BaseEntity {
 
-    @Column(name = "role_id", nullable = false, length = 30)
-    private String roleId;
+    @Builder.Default
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<MemberRoleEntity> memberRoles = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id", insertable = false, updatable = false)
-    private RoleEntity role;
+    @Builder.Default()
+    @Transient
+    private List<RoleEntity> roles = new ArrayList<>();
 
     @Column(name = "nickname", nullable = false, length = 20)
     private String nickname;
@@ -59,8 +61,7 @@ public class MemberEntity extends BaseEntity {
     public MemberDto toDto() {
         return MemberDto.builder()
                 .id(getId())
-                .roleId(roleId)
-                .role(role == null ? null : role.toDto())
+                .roles(memberRoles.stream().map(MemberRoleEntity::getRole).map(RoleEntity::toDto).toList())
                 .nickname(nickname)
                 .idAtProvider(idAtProvider)
                 .platform(platform)
@@ -72,6 +73,11 @@ public class MemberEntity extends BaseEntity {
                 .createdAt(getCreatedAt())
                 .updatedAt(getUpdatedAt())
                 .build();
+    }
+
+    public MemberEntity fetchRoles() {
+        this.roles = this.memberRoles.stream().map(MemberRoleEntity::getRole).toList();
+        return this;
     }
 
 }
