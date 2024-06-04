@@ -1,5 +1,7 @@
 package com.footbolic.api.program.controller;
 
+import com.footbolic.api.annotation.RoleCheck;
+import com.footbolic.api.annotation.RoleCode;
 import com.footbolic.api.common.entity.BaseResponse;
 import com.footbolic.api.common.entity.ErrorResponse;
 import com.footbolic.api.common.entity.SuccessResponse;
@@ -35,6 +37,9 @@ public class ProgramController {
     @Parameter(name = "size", description = "결과 목록 크기")
     @Parameter(name = "page", description = "결과 목록 페이지")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_PRGRM_MNG)
+    })
     @GetMapping
     public SuccessResponse getProgramList(
             Pageable pageable,
@@ -60,6 +65,9 @@ public class ProgramController {
 
     @Operation(summary = "프로그램 생성", description = "파라미터로 전달 받은 프로그램을 생성한다.")
     @Parameter(name = "program", description = "생성할 프로그램 객체", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_PRGRM_MNG)
+    })
     @PostMapping
     public ResponseEntity<BaseResponse> createProgram(
             @RequestBody @Valid ProgramDto program
@@ -74,6 +82,9 @@ public class ProgramController {
 
     @Operation(summary = "프로그램 단건 조회", description = "전달 받은 식별번호를 가진 프로그램 조회한다.")
     @Parameter(name = "id", description = "프로그램 식별번호", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_PRGRM_MNG)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse> getProgram(
             @PathVariable(name = "id") String id
@@ -92,6 +103,9 @@ public class ProgramController {
 
     @Operation(summary = "프로그램 수정", description = "파라미터로 전달 받은 프로그램을 수정한다.")
     @Parameter(name = "program", description = "수정할 프로그램 객체", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_PRGRM_MNG)
+    })
     @PatchMapping
     public ResponseEntity<BaseResponse> updateProgram(
             @RequestBody @Valid ProgramDto program
@@ -111,6 +125,9 @@ public class ProgramController {
     }
 
     @Operation(summary = "프로그램 삭제", description = "제공된 식별번호를 가진 프로그램 삭제한다.")
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_PRGRM_MNG)
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deleteProgram(
             @PathVariable(name = "id") String id
