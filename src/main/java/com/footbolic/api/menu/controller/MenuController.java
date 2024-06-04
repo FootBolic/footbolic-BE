@@ -44,6 +44,9 @@ public class MenuController {
 
     @Operation(summary = "메뉴 목록 조회", description = "메뉴 목록을 트리 형태로 조회")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_MENU_MNG)
+    })
     @GetMapping
     public SuccessResponse getMenuList() {
         List<MenuDto> menus = menuService.findAll();
@@ -80,7 +83,6 @@ public class MenuController {
     @Operation(summary = "메뉴 생성", description = "파라미터로 전달 받은 메뉴를 생성")
     @Parameter(name = "menu", description = "생성할 메뉴 객체", required = true)
     @RoleCheck(codes = {
-//            @RoleCode(code = RoleCode.ROLE_SYS_MNG),
             @RoleCode(code = RoleCode.ROLE_MENU_MNG)
     })
     @PostMapping
@@ -97,6 +99,9 @@ public class MenuController {
 
     @Operation(summary = "메뉴 단건 조회", description = "전달 받은 식별번호를 가진 메뉴 조회")
     @Parameter(name = "id", description = "메뉴 식별번호", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_MENU_MNG)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse> getMenu(
             @PathVariable(name = "id") String id
@@ -119,6 +124,9 @@ public class MenuController {
 
     @Operation(summary = "메뉴 수정", description = "파라미터로 전달 받은 메뉴를 수정")
     @Parameter(name = "menu", description = "수정할 메뉴 객체", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_MENU_MNG)
+    })
     @PatchMapping
     public ResponseEntity<BaseResponse> updateMenu(
             @RequestBody @Valid MenuDto menu
@@ -139,6 +147,9 @@ public class MenuController {
 
     @Operation(summary = "메뉴 삭제", description = "제공된 식별번호를 가진 메뉴를 삭제")
     @Parameter(name = "menu", description = "삭제할 메뉴 객체", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_MENU_MNG)
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deleteMenu(
             @PathVariable(name = "id") String id

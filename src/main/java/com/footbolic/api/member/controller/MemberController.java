@@ -1,10 +1,12 @@
 package com.footbolic.api.member.controller;
 
+import com.footbolic.api.annotation.RoleCheck;
+import com.footbolic.api.annotation.RoleCode;
 import com.footbolic.api.common.entity.BaseResponse;
 import com.footbolic.api.common.entity.ErrorResponse;
 import com.footbolic.api.common.entity.SuccessResponse;
-import com.footbolic.api.member.service.MemberService;
 import com.footbolic.api.member.dto.MemberDto;
+import com.footbolic.api.member.service.MemberService;
 import com.footbolic.api.member_role.dto.MemberRoleDto;
 import com.footbolic.api.member_role.service.MemberRoleService;
 import com.footbolic.api.role.service.RoleService;
@@ -22,7 +24,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -67,6 +68,9 @@ public class MemberController {
 
     @Operation(summary = "회원 목록 조회", description = "회원 목록을 page 단위로 조회")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_MEMBER_MNG)
+    })
     @GetMapping
     public SuccessResponse getMemberList(
             Pageable pageable,
@@ -107,6 +111,9 @@ public class MemberController {
     }
 
     @Operation(summary = "회원 단건 조회", description = "회원 식별번호로 회원정보 조회")
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_MEMBER_MNG)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse> getMember(
             @PathVariable(name = "id") String id
@@ -188,6 +195,9 @@ public class MemberController {
 
     @Operation(summary = "회원 수정", description = "파라미터로 전달 받은 회원을 수정")
     @Parameter(name = "member", description = "수정할 회원 객체", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_MEMBER_MNG)
+    })
     @PatchMapping
     public ResponseEntity<BaseResponse> updateMember(
             @RequestBody @Valid MemberDto paramMember
@@ -264,6 +274,9 @@ public class MemberController {
 
     @Operation(summary = "회원 삭제", description = "제공된 식별번호를 가진 회원 삭제")
     @Parameter(name = "member", description = "수정할 회원 객체", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_MEMBER_MNG)
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deleteMember(
             @PathVariable(name = "id") String id

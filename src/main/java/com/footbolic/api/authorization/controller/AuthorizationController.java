@@ -1,5 +1,7 @@
 package com.footbolic.api.authorization.controller;
 
+import com.footbolic.api.annotation.RoleCheck;
+import com.footbolic.api.annotation.RoleCode;
 import com.footbolic.api.authorization.dto.AuthorizationDto;
 import com.footbolic.api.authorization.service.AuthorizationService;
 import com.footbolic.api.common.entity.BaseResponse;
@@ -30,6 +32,9 @@ public class AuthorizationController {
 
     @Operation(summary = "권한 목록 조회", description = "권한 목록을 page 단위로 조회")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_AUTH_MNG)
+    })
     @GetMapping
     public SuccessResponse getAuthorizationList(
             Pageable pageable,
@@ -45,6 +50,9 @@ public class AuthorizationController {
 
     @Operation(summary = "전체 권한 목록 조회", description = "전체 권한 목록을 조회한다.")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_ROLE_MNG)
+    })
     @GetMapping("/all")
     public SuccessResponse getAllAuthorizationList() {
         Map<String, Object> result = new HashMap<>();
@@ -55,6 +63,9 @@ public class AuthorizationController {
 
     @Operation(summary = "권한 생성", description = "파라미터로 전달 받은 권한를 생성")
     @Parameter(name = "authorization", description = "생성할 권한 객체", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_AUTH_MNG)
+    })
     @PostMapping
     public ResponseEntity<BaseResponse> createAuthorization(
             @RequestBody @Valid AuthorizationDto authorization
@@ -65,6 +76,9 @@ public class AuthorizationController {
 
     @Operation(summary = "권한 단건 조회", description = "전달 받은 식별번호를 가진 권한 조회")
     @Parameter(name = "id", description = "권한 식별번호", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_AUTH_MNG)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse> getAuthorization(
             @PathVariable(name = "id") String id
@@ -80,6 +94,9 @@ public class AuthorizationController {
 
     @Operation(summary = "권한 수정", description = "파라미터로 전달 받은 권한를 수정")
     @Parameter(name = "authorization", description = "수정할 권한 객체", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_AUTH_MNG)
+    })
     @PatchMapping
     public ResponseEntity<BaseResponse> updateAuthorization(
             @RequestBody @Valid AuthorizationDto authorization
@@ -96,6 +113,9 @@ public class AuthorizationController {
 
     @Operation(summary = "권한 삭제", description = "제공된 식별번호를 가진 권한 삭제")
     @Parameter(name = "authorization", description = "수정할 권한 객체", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_AUTH_MNG)
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deleteAuthorization(
             @PathVariable(name = "id") String id

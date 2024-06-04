@@ -2,7 +2,6 @@ package com.footbolic.api.aop;
 
 import com.footbolic.api.annotation.RoleCheck;
 import com.footbolic.api.annotation.RoleCode;
-import com.footbolic.api.util.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +26,6 @@ import java.util.List;
 @Slf4j
 public class AuthAspect {
 
-    private final JwtUtil jwtUtil;
-
     @Pointcut("@annotation(com.footbolic.api.annotation.RoleCheck)")
     public void onRoleCheck(){}
 
@@ -42,7 +39,7 @@ public class AuthAspect {
     public Object checkRole(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         RoleCheck roleCheck = methodSignature.getMethod().getAnnotation(RoleCheck.class);
-        List<String> requiredCodes = Arrays.stream(roleCheck.codes()).map(RoleCode::code).toList();
+        List<String> requiredCodes = new java.util.ArrayList<>(Arrays.stream(roleCheck.codes()).map(RoleCode::code).toList());
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -50,6 +47,8 @@ public class AuthAspect {
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
+
+        requiredCodes.add(RoleCode.ROLE_SYS_MNG);
 
         for (String s : requiredCodes) {
             if (userCodes.contains(s)) return joinPoint.proceed();

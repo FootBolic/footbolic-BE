@@ -1,5 +1,7 @@
 package com.footbolic.api.role.controller;
 
+import com.footbolic.api.annotation.RoleCheck;
+import com.footbolic.api.annotation.RoleCode;
 import com.footbolic.api.authorization_role.dto.AuthorizationRoleDto;
 import com.footbolic.api.authorization_role.service.AuthorizationRoleService;
 import com.footbolic.api.common.entity.BaseResponse;
@@ -39,6 +41,9 @@ public class RoleController {
     @Parameter(name = "size", description = "결과 목록 크기")
     @Parameter(name = "page", description = "결과 목록 페이지")
     @ResponseStatus(HttpStatus.OK)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_ROLE_MNG)
+    })
     @GetMapping
     public SuccessResponse getRoleList(
             Pageable pageable,
@@ -63,6 +68,9 @@ public class RoleController {
 
     @Operation(summary = "역할 생성", description = "파라미터로 전달 받은 역할를 생성한다.")
     @Parameter(name = "role", description = "생성할 역할 객체", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_ROLE_MNG)
+    })
     @PostMapping
     public ResponseEntity<BaseResponse> createRole(
             @RequestBody @Valid RoleDto role
@@ -88,6 +96,9 @@ public class RoleController {
 
     @Operation(summary = "역할 단건 조회", description = "전달 받은 result 가진 역할 조회한다.")
     @Parameter(name = "id", description = "역할 식별번호", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_ROLE_MNG)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse> getRole(
             @PathVariable(name = "id") String id
@@ -106,6 +117,9 @@ public class RoleController {
 
     @Operation(summary = "역할 수정", description = "파라미터로 전달 받은 역할를 수정한다.")
     @Parameter(name = "role", description = "수정할 역할 객체", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_ROLE_MNG)
+    })
     @PatchMapping
     public ResponseEntity<BaseResponse> updateRole(
             @RequestBody @Valid RoleDto role
@@ -136,6 +150,9 @@ public class RoleController {
     }
 
     @Operation(summary = "역할 삭제", description = "제공된 식별번호를 가진 역할 삭제한다.")
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_ROLE_MNG)
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deleteRole(
             @PathVariable(name = "id") String id
