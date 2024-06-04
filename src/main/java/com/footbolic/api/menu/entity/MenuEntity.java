@@ -1,16 +1,16 @@
 package com.footbolic.api.menu.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
 import com.footbolic.api.menu.dto.MenuDto;
 import com.footbolic.api.program.entity.ProgramEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Getter
@@ -39,9 +39,6 @@ public class MenuEntity extends ExtendedBaseEntity {
     @JoinColumn(name = "program_id", insertable = false, updatable = false)
     private ProgramEntity program;
 
-    @Column(name = "path", length = 100)
-    private String path;
-
     @Column(name = "icon_code_id", length = 30)
     private String iconCodeId;
 
@@ -59,7 +56,8 @@ public class MenuEntity extends ExtendedBaseEntity {
                 .parentId(parentId)
                 .children(children == null ? null : children.stream().map(MenuEntity::toDto).toList())
                 .title(title)
-                .path(path)
+                .programId(programId)
+                .program(program == null ? null : program.toDto())
                 .iconCodeId(iconCodeId)
                 .isUsed(isUsed)
                 .order(order)

@@ -30,6 +30,8 @@ public class ProgramDto {
 
     private String code;
 
+    private String path;
+
     @Builder.Default
     private List<MenuDto> menus = new ArrayList<>();
 
@@ -54,6 +56,7 @@ public class ProgramDto {
                 .id(id)
                 .title(title)
                 .code(code)
+                .path(path)
                 .menus(menus == null ? null : menus.stream().map(MenuDto::toEntity).toList())
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)

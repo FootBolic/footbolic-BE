@@ -6,10 +6,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.footbolic.api.member.dto.MemberDto;
-import com.footbolic.api.member.entity.MemberEntity;
 import com.footbolic.api.menu.entity.MenuEntity;
+import com.footbolic.api.program.dto.ProgramDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,7 +34,9 @@ public class MenuDto {
 
     private String title;
 
-    private String path;
+    private String programId;
+
+    private ProgramDto program;
 
     private String iconCodeId;
 
@@ -62,7 +67,8 @@ public class MenuDto {
                 .parentId(parentId)
                 .children(children == null ? null : children.stream().map(MenuDto::toEntity).toList())
                 .title(title)
-                .path(path)
+                .programId(programId)
+                .program(program == null ? null : program.toEntity())
                 .iconCodeId(iconCodeId)
                 .isUsed(isUsed)
                 .order(order)

@@ -5,6 +5,7 @@ import com.footbolic.api.program.entity.ProgramEntity;
 import com.footbolic.api.program.repository.ProgramRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +49,11 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Override
     public void deleteById(String id) {
-        programRepository.deleteById(id);
+        try {
+            programRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(e.getMessage());
+        }
     }
 
     @Override

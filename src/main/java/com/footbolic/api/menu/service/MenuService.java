@@ -12,8 +12,6 @@ public interface MenuService {
 
     List<MenuDto> findAllByAuthorizations(List<AuthorizationDto> authorizations);
 
-    List<MenuDto> findUsedMenus();
-
     MenuDto findById(String id);
 
     MenuDto saveMenu(MenuDto menu);

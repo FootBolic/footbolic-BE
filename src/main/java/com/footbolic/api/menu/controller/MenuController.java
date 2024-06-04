@@ -1,11 +1,9 @@
 package com.footbolic.api.menu.controller;
 
-import com.footbolic.api.authorization.dto.AuthorizationDto;
 import com.footbolic.api.authorization.service.AuthorizationService;
 import com.footbolic.api.common.entity.BaseResponse;
 import com.footbolic.api.common.entity.ErrorResponse;
 import com.footbolic.api.common.entity.SuccessResponse;
-import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.menu.dto.MenuDto;
 import com.footbolic.api.menu.service.MenuService;
 import com.footbolic.api.role.dto.RoleDto;
@@ -18,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,9 +43,7 @@ public class MenuController {
     @Operation(summary = "메뉴 목록 조회", description = "메뉴 목록을 트리 형태로 조회")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public SuccessResponse getMenuList(
-            @RequestParam(required = false) Boolean isUsed
-    ) {
+    public SuccessResponse getMenuList() {
         List<MenuDto> menus = menuService.findAll();
 
         Map<String, Object> result = new HashMap<>();
@@ -143,8 +140,12 @@ public class MenuController {
         if (id == null || id.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 메뉴 식별번호입니다."));
         } else if (menuService.existsById(id)) {
-            menuService.deleteMenu(id);
-
+            try {
+                menuService.deleteMenu(id);
+            } catch (DataIntegrityViolationException e) {
+                return ResponseEntity.badRequest().body(new ErrorResponse("메뉴를 사용하는 권한이 존재합니다."));
+            }
+            
             Map<String, Object> result = new HashMap<>();
             result.put("id", id);
 

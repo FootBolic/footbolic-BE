@@ -1,11 +1,11 @@
 package com.footbolic.api.authorization.service;
 
-import com.footbolic.api.authorization.repository.AuthorizationRepository;
 import com.footbolic.api.authorization.dto.AuthorizationDto;
 import com.footbolic.api.authorization.entity.AuthorizationEntity;
-import com.footbolic.api.role.dto.RoleDto;
+import com.footbolic.api.authorization.repository.AuthorizationRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 

@@ -4,6 +4,7 @@ import com.footbolic.api.role.dto.RoleDto;
 import com.footbolic.api.role.entity.RoleEntity;
 import com.footbolic.api.role.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 

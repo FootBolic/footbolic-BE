@@ -25,6 +25,9 @@ public class ProgramEntity extends ExtendedBaseEntity {
     @Column(name = "code", nullable = false, unique = true, length = 20)
     private String code;
 
+    @Column(name = "path", length = 100)
+    private String path;
+
     @Builder.Default
     @Transient
     private List<MenuEntity> menus = new ArrayList<>();
@@ -34,6 +37,7 @@ public class ProgramEntity extends ExtendedBaseEntity {
                 .id(getId())
                 .title(title)
                 .code(code)
+                .path(path)
                 .menus(menus == null ? null : menus.stream().map(MenuEntity::toDto).toList())
                 .createdAt(getCreatedAt())
                 .createMemberId(getCreateMemberId())

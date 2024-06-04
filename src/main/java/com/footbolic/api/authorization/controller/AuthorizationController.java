@@ -1,10 +1,10 @@
 package com.footbolic.api.authorization.controller;
 
+import com.footbolic.api.authorization.dto.AuthorizationDto;
+import com.footbolic.api.authorization.service.AuthorizationService;
 import com.footbolic.api.common.entity.BaseResponse;
 import com.footbolic.api.common.entity.ErrorResponse;
 import com.footbolic.api.common.entity.SuccessResponse;
-import com.footbolic.api.authorization.dto.AuthorizationDto;
-import com.footbolic.api.authorization.service.AuthorizationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
