@@ -3,9 +3,12 @@ package com.footbolic.api.post.entity;
 import com.footbolic.api.board.entity.BoardEntity;
 import com.footbolic.api.comment.entity.CommentEntity;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
+import com.footbolic.api.post.dto.PostDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -13,8 +16,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Schema(name = "게시글 Entity")
 @Getter
 @SuperBuilder
+@NoArgsConstructor
 @Entity(name = "PostEntity")
 @Table(name = "Post")
 public class PostEntity extends ExtendedBaseEntity {
@@ -50,4 +55,23 @@ public class PostEntity extends ExtendedBaseEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<CommentEntity> comments = new ArrayList<>();
 
+    public PostDto toDto() {
+        return PostDto.builder()
+                .id(getId())
+                .title(title)
+                .content(content)
+                .boardId(boardId)
+                .board(board == null ? null : board.toDto())
+                .isSecret(isSecret)
+                .isAnnouncement(isAnnouncement)
+                .announcementStartsAt(announcementStartsAt)
+                .announcementEndsAt(announcementEndsAt)
+                .createdAt(getCreatedAt())
+                .createMemberId(getCreateMemberId())
+                .createdBy(getCreatedBy() == null ? null : getCreatedBy().toDto())
+                .updatedAt(getUpdatedAt())
+                .updateMemberId(getUpdateMemberId())
+                .updatedBy(getUpdatedBy() == null ? null : getUpdatedBy().toDto())
+                .build();
+    }
 }

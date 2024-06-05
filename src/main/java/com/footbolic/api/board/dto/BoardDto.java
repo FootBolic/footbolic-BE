@@ -1,13 +1,13 @@
-package com.footbolic.api.menu.dto;
+package com.footbolic.api.board.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.footbolic.api.board.entity.BoardEntity;
 import com.footbolic.api.member.dto.MemberDto;
-import com.footbolic.api.menu.entity.MenuEntity;
-import com.footbolic.api.program.dto.ProgramDto;
+import com.footbolic.api.post.dto.PostDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,36 +18,34 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Schema(name = "Menu 객체")
+@Schema(name = "게시판 DTO")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuDto {
+public class BoardDto {
 
     private String id;
 
-    private String parentId;
-
-    @Builder.Default
-    private List<MenuDto> children = new ArrayList<>();
-
     private String title;
 
-    private String programId;
+    @JsonProperty("isSecretable")
+    private boolean isSecretable;
 
-    private ProgramDto program;
+    @JsonProperty("isRecommendable")
+    private boolean isRecommendable;
 
-    private String detailId;
+    @JsonProperty("isCommentable")
+    private boolean isCommentable;
 
-    private Object detail;
-
-    private String iconCodeId;
+    @JsonProperty("isAnnounceable")
+    private boolean isAnnounceable;
 
     @JsonProperty("isUsed")
     private boolean isUsed;
 
-    private long order;
+    @Builder.Default
+    private List<PostDto> posts = new ArrayList<>();
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -65,18 +63,15 @@ public class MenuDto {
 
     private MemberDto updatedBy;
 
-    public MenuEntity toEntity() {
-        return MenuEntity.builder()
+    public BoardEntity toEntity() {
+        return BoardEntity.builder()
                 .id(id)
-                .parentId(parentId)
-                .children(children == null ? null : children.stream().map(MenuDto::toEntity).toList())
                 .title(title)
-                .programId(programId)
-                .program(program == null ? null : program.toEntity())
-                .detailId(detailId)
-                .iconCodeId(iconCodeId)
+                .isSecretable(isSecretable)
+                .isRecommendable(isRecommendable)
+                .isCommentable(isCommentable)
+                .isAnnounceable(isAnnounceable)
                 .isUsed(isUsed)
-                .order(order)
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)
                 .createdBy(createdBy == null ? null : createdBy.toEntity())
