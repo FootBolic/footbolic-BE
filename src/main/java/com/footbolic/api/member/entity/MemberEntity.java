@@ -5,6 +5,7 @@ import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.member_role.entity.MemberRoleEntity;
 import com.footbolic.api.notification.entity.NotificationEntity;
 import com.footbolic.api.role.entity.RoleEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Schema(name = "회원 Entity")
 @Getter
 @SuperBuilder
 @NoArgsConstructor

@@ -16,5 +16,5 @@ public @interface RoleCode {
 
     String ROLE_PRGRM_MNG = "ROLE_PRGRM_MNG";
 
-
+    String ROLE_BOARD_MNG = "ROLE_BOARD_MNG";
 }

@@ -39,7 +39,16 @@ public class AuthAspect {
     public Object checkRole(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         RoleCheck roleCheck = methodSignature.getMethod().getAnnotation(RoleCheck.class);
-        List<String> requiredCodes = new java.util.ArrayList<>(Arrays.stream(roleCheck.codes()).map(RoleCode::code).toList());
+        List<String> requiredCodes = new java.util.ArrayList<>(
+                Arrays.stream(
+                        roleCheck.codes()
+                )
+                .map(RoleCode::code)
+                .toList()
+        );
+
+        // 시스템 관리자는 전체 메서드 접근 권한 부여
+        requiredCodes.add(RoleCode.ROLE_SYS_MNG);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -47,8 +56,6 @@ public class AuthAspect {
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
-
-        requiredCodes.add(RoleCode.ROLE_SYS_MNG);
 
         for (String s : requiredCodes) {
             if (userCodes.contains(s)) return joinPoint.proceed();

@@ -39,6 +39,12 @@ public class MenuEntity extends ExtendedBaseEntity {
     @JoinColumn(name = "program_id", insertable = false, updatable = false)
     private ProgramEntity program;
 
+    @Column(name = "detail_id", length = 30)
+    private String detailId;
+
+    @Transient
+    private Object detail;
+
     @Column(name = "icon_code_id", length = 30)
     private String iconCodeId;
 
@@ -58,6 +64,8 @@ public class MenuEntity extends ExtendedBaseEntity {
                 .title(title)
                 .programId(programId)
                 .program(program == null ? null : program.toDto())
+                .detailId(detailId)
+                .detail(detail)
                 .iconCodeId(iconCodeId)
                 .isUsed(isUsed)
                 .order(order)

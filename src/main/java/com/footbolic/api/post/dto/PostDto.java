@@ -1,13 +1,13 @@
-package com.footbolic.api.menu.dto;
+package com.footbolic.api.post.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.footbolic.api.board.dto.BoardDto;
 import com.footbolic.api.member.dto.MemberDto;
-import com.footbolic.api.menu.entity.MenuEntity;
-import com.footbolic.api.program.dto.ProgramDto;
+import com.footbolic.api.post.entity.PostEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,39 +15,39 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Schema(name = "Menu 객체")
+@Schema(name = "게시글 DTO")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuDto {
+public class PostDto {
 
     private String id;
 
-    private String parentId;
+    private String boardId;
 
-    @Builder.Default
-    private List<MenuDto> children = new ArrayList<>();
+    private BoardDto board;
 
     private String title;
 
-    private String programId;
+    private String content;
 
-    private ProgramDto program;
+    @JsonProperty("isSecret")
+    private boolean isSecret;
 
-    private String detailId;
+    @JsonProperty("isAnnouncement")
+    private boolean isAnnouncement;
 
-    private Object detail;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime announcementStartsAt;
 
-    private String iconCodeId;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime announcementEndsAt;
 
-    @JsonProperty("isUsed")
-    private boolean isUsed;
-
-    private long order;
+//    private List<CommentEntity> comments = new ArrayList<>();
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -65,18 +65,17 @@ public class MenuDto {
 
     private MemberDto updatedBy;
 
-    public MenuEntity toEntity() {
-        return MenuEntity.builder()
+    public PostEntity toEntity() {
+        return PostEntity.builder()
                 .id(id)
-                .parentId(parentId)
-                .children(children == null ? null : children.stream().map(MenuDto::toEntity).toList())
                 .title(title)
-                .programId(programId)
-                .program(program == null ? null : program.toEntity())
-                .detailId(detailId)
-                .iconCodeId(iconCodeId)
-                .isUsed(isUsed)
-                .order(order)
+                .content(content)
+                .boardId(boardId)
+                .board(board == null ? null : board.toEntity())
+                .isSecret(isSecret)
+                .isAnnouncement(isAnnouncement)
+                .announcementStartsAt(announcementStartsAt)
+                .announcementEndsAt(announcementEndsAt)
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)
                 .createdBy(createdBy == null ? null : createdBy.toEntity())
@@ -85,5 +84,4 @@ public class MenuDto {
                 .updatedBy(updatedBy == null ? null : updatedBy.toEntity())
                 .build();
     }
-
 }
