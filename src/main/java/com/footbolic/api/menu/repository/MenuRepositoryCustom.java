@@ -8,6 +8,7 @@ public interface MenuRepositoryCustom {
 
     List<MenuEntity> findAll();
 
-    List<MenuEntity> findUsedMenus();
+    MenuEntity findMenuPathByProgramIdAndDetailId(String programId, String detailId, String menuId);
 
+    MenuEntity findByPath(String path);
 }

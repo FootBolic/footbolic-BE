@@ -11,20 +11,4 @@ import java.util.List;
 
 @Repository
 public interface MenuRepository extends JpaRepository<MenuEntity, String>, MenuRepositoryCustom {
-
-//    @Query("SELECT" +
-//            " new com.footbolic.api.menu.dto.MenuDto(" +
-//            "   e.id," +
-//            "   e.parentId," +
-//            "   e.title," +
-//            "   e.path," +
-//            "   e.iconCodeId," +
-//            "   e.createdAt," +
-//            "   e.createMemberId," +
-//            "   e.updatedAt," +
-//            "   e.updateMemberId" +
-//            ") " +
-//            "FROM MenuEntity e")
-//    List<MenuDto> findAllMenus();
-
 }

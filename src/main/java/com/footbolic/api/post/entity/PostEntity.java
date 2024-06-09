@@ -52,7 +52,7 @@ public class PostEntity extends ExtendedBaseEntity {
     private LocalDateTime announcementEndsAt;
 
     @Builder.Default
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CommentEntity> comments = new ArrayList<>();
 
     public PostDto toDto() {
