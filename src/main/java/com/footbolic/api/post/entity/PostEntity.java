@@ -61,7 +61,6 @@ public class PostEntity extends ExtendedBaseEntity {
                 .title(title)
                 .content(content)
                 .boardId(boardId)
-                .board(board == null ? null : board.toDto())
                 .isSecret(isSecret)
                 .isAnnouncement(isAnnouncement)
                 .announcementStartsAt(announcementStartsAt)

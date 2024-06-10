@@ -126,9 +126,9 @@ public class MenuController {
     @Parameter(name = "id", description = "메뉴 식별번호", required = true)
     @GetMapping("/public/path")
     public ResponseEntity<BaseResponse> getMenuPath(
-            @RequestParam(name = "path") String path
+            @RequestParam(name = "menuId") String menuId
     ) {
-        MenuDto menu = menuService.findByPath(path);
+        MenuDto menu = menuService.findPath(menuId);
 
         if (menu != null) {
             Map<String, Object> result = new HashMap<>();
@@ -137,30 +137,6 @@ public class MenuController {
             return ResponseEntity.ok(new SuccessResponse(result));
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("존재하지 않는 메뉴입니다."));
-        }
-    }
-
-    @Operation(summary = "메뉴 중복 여부 조회", description = "프로그램 식별번호와 세부페이지 식별번호로 중복 메뉴 존재 여부를 조회한다..")
-    @Parameter(name = "programId", description = "프로그램 식별번호", required = true)
-    @Parameter(name = "detailId", description = "세부페이지 식별번호")
-    @Parameter(name = "menuId", description = "중복검사에서 제외할 메뉴 식별번호")
-    @RoleCheck(codes = {
-            @RoleCode(code = RoleCode.ROLE_MENU_MNG)
-    })
-    @PostMapping("/{programId}")
-    public ResponseEntity<BaseResponse> isDuplicate(
-            @PathVariable(name = "programId") String programId,
-            @RequestParam(name = "detailId", required = false) String detailId,
-            @RequestParam(name = "menuId", required = false) String menuId
-    ) {
-        if (programId == null || programId.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 메뉴 프로그램 식별번호입니다."));
-        } else {
-            MenuDto menu = menuService.findMenuPathByProgramIdAndDetailId(programId, detailId, menuId);
-            Map<String, Object> result = new HashMap<>();
-            result.put("isDuplicate", menu != null);
-
-            return ResponseEntity.ok(new SuccessResponse(result));
         }
     }
 

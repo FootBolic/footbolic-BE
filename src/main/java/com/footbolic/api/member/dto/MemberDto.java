@@ -72,4 +72,11 @@ public class MemberDto {
                 .build();
     }
 
+    public MemberDto toPublicDto() {
+        return MemberDto.builder()
+                .id(id)
+                .nickname(nickname)
+                .build();
+    }
+
 }

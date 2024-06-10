@@ -14,10 +14,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,11 +42,13 @@ public class PostController {
     public SuccessResponse getPostList(
             Pageable pageable,
             @RequestParam(name = "boardId", required = false) String boardId,
-            @RequestParam(name = "searchTitle", required = false) String searchTitle
+            @RequestParam(name = "searchTitle", required = false) String searchTitle,
+            @RequestParam(name = "searchCreatedBy", required = false) String searchCreatedBy,
+            @RequestParam(name = "searchCreatedAt", required = false) LocalDateTime searchCreatedAt
     ) {
         Map<String, Object> result = new HashMap<>();
-        result.put("posts", postService.findAll(boardId, pageable, searchTitle));
-        result.put("size", postService.count(boardId, searchTitle));
+        result.put("posts", postService.findAll(boardId, pageable, searchTitle, searchCreatedBy, searchCreatedAt));
+        result.put("size", postService.count(boardId, searchTitle, searchCreatedBy, searchCreatedAt));
 
         return new SuccessResponse(result);
     }

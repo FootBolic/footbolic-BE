@@ -46,33 +46,12 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public MenuDto findMenuPathByProgramIdAndDetailId(String programId, String detailId, String menuId) {
-        MenuEntity target = menuRepository.findMenuPathByProgramIdAndDetailId(programId, detailId, menuId);
-
-        if (target != null && target.isUsed()) {
-            MenuDto menu = target.toPublicDto();
-            if (menu.getParentId() != null && !menu.getParentId().isBlank()) {
-                MenuDto parent = findMenuPathById(menu.getParentId());
-
-                if (parent == null || parent.getId().isBlank()) {
-                    return null;
-                } else {
-                    menu.setParent(parent);
-                }
-            }
-
-            return menu;
-        }
-
-        return null;
-    }
-
-    private MenuDto findMenuPathById(String id) {
+    public MenuDto findPath(String id) {
         MenuDto menu = menuRepository.findById(id).map(MenuEntity::toPublicDto).orElse(null);
 
         if (menu != null && menu.isUsed()) {
             if (menu.getParentId() != null && !menu.getParentId().isBlank()) {
-                MenuDto parent = findMenuPathById(menu.getParentId());
+                MenuDto parent = findPath(menu.getParentId());
 
                 if (parent == null || parent.getId().isBlank()) {
                     return null;
@@ -84,26 +63,6 @@ public class MenuServiceImpl implements MenuService {
             return menu;
         }
 
-        return null;
-    }
-
-    @Override
-    public MenuDto findByPath(String path) {
-        MenuEntity menuEntity = menuRepository.findByPath(path);
-
-        if (menuEntity != null && menuEntity.isUsed()) {
-            MenuDto menu = menuEntity.toPublicDto();
-            if (menu.getParentId() != null && !menu.getParentId().isBlank()) {
-                MenuDto parent = findMenuPathById(menu.getParentId());
-
-                if (parent == null || parent.getId().isBlank()) {
-                    return null;
-                } else {
-                    menu.setParent(parent);
-                }
-            }
-            return menu;
-        }
         return null;
     }
 

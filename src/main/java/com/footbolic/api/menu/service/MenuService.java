@@ -14,9 +14,7 @@ public interface MenuService {
 
     MenuDto findById(String id);
 
-    MenuDto findMenuPathByProgramIdAndDetailId(String programId, String detailId, String menuId);
-
-    MenuDto findByPath(String path);
+    MenuDto findPath(String id);
 
     MenuDto saveMenu(MenuDto menu);
 
