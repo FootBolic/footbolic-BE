@@ -1,14 +1,14 @@
-package com.footbolic.api.post.dto;
+package com.footbolic.api.comment.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.footbolic.api.board.dto.BoardDto;
-import com.footbolic.api.comment.dto.CommentDto;
+import com.footbolic.api.comment.entity.CommentEntity;
 import com.footbolic.api.member.dto.MemberDto;
-import com.footbolic.api.post.entity.PostEntity;
+import com.footbolic.api.post.dto.PostDto;
+import com.footbolic.api.reply.dto.ReplyDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,39 +19,23 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Schema(name = "게시글 DTO")
+@Schema(name = "댓글 DTO")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostDto {
+public class CommentDto {
 
     private String id;
 
-    private String boardId;
+    private String postId;
 
-    private BoardDto board;
-
-    private String title;
+    private PostDto post;
 
     private String content;
 
-    @JsonProperty("isSecret")
-    private boolean isSecret;
-
-    @JsonProperty("isAnnouncement")
-    private boolean isAnnouncement;
-
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime announcementStartsAt;
-
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime announcementEndsAt;
-
     @Builder.Default
-    private List<CommentDto> comments = new ArrayList<>();
+    private List<ReplyDto> replies = new ArrayList<>();
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -72,16 +56,11 @@ public class PostDto {
     @JsonProperty("isEditable")
     private boolean isEditable;
 
-    public PostEntity toEntity() {
-        return PostEntity.builder()
+    public CommentEntity toEntity() {
+        return CommentEntity.builder()
                 .id(id)
-                .title(title)
                 .content(content)
-                .boardId(boardId)
-                .isSecret(isSecret)
-                .isAnnouncement(isAnnouncement)
-                .announcementStartsAt(announcementStartsAt)
-                .announcementEndsAt(announcementEndsAt)
+                .postId(postId)
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)
                 .createdBy(createdBy == null ? null : createdBy.toEntity())

@@ -2,11 +2,11 @@ package com.footbolic.api.post.controller;
 
 import com.footbolic.api.annotation.RoleCheck;
 import com.footbolic.api.annotation.RoleCode;
-import com.footbolic.api.post.dto.PostDto;
-import com.footbolic.api.post.service.PostService;
 import com.footbolic.api.common.entity.BaseResponse;
 import com.footbolic.api.common.entity.ErrorResponse;
 import com.footbolic.api.common.entity.SuccessResponse;
+import com.footbolic.api.post.dto.PostDto;
+import com.footbolic.api.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,14 +14,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Tag(name = "게시글 API")
@@ -99,17 +100,30 @@ public class PostController {
     })
     @PatchMapping
     public ResponseEntity<BaseResponse> updatePost(
-            @RequestBody @Valid PostDto post
+            @RequestBody @Valid PostDto post,
+            Authentication authentication
     ) {
         if (post.getId() == null || post.getId().isBlank()) {
             return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 게시글 정보입니다."));
         } else if (postService.existsById(post.getId())) {
-            PostDto updatedPost = postService.savePost(post);
+            PostDto target = postService.findById(post.getId());
 
-            Map<String, Object> result = new HashMap<>();
-            result.put("updatedPost", updatedPost);
+            String memberId = authentication.getCredentials().toString();
+            List<String> memberRoleCodes = authentication.getAuthorities()
+                    .stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toList();
 
-            return ResponseEntity.ok(new SuccessResponse(result));
+            if (target.getCreateMemberId().equals(memberId) || memberRoleCodes.contains(RoleCode.ROLE_SYS_MNG)) {
+                PostDto updatedPost = postService.savePost(post);
+
+                Map<String, Object> result = new HashMap<>();
+                result.put("updatedPost", updatedPost);
+
+                return ResponseEntity.ok(new SuccessResponse(result));
+            } else {
+                return ResponseEntity.badRequest().body(new ErrorResponse("수정할 권한이 없는 게시글입니다."));
+            }
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("조회된 게시글이 없습니다."));
         }
@@ -122,17 +136,30 @@ public class PostController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deletePost(
-            @PathVariable(name = "id") String id
+            @PathVariable(name = "id") String id,
+            Authentication authentication
     ) {
         if (id == null || id.isBlank()) {
             return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 게시글 식별번호입니다."));
         } else if (postService.existsById(id)) {
-            postService.deletePost(id);
+            PostDto target = postService.findById(id);
 
-            Map<String, String> result = new HashMap<>();
-            result.put("id", id);
+            String memberId = authentication.getCredentials().toString();
+            List<String> memberRoleCodes = authentication.getAuthorities()
+                    .stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toList();
 
-            return ResponseEntity.ok(new SuccessResponse(result));
+            if (target.getCreateMemberId().equals(memberId) || memberRoleCodes.contains(RoleCode.ROLE_SYS_MNG)) {
+                postService.deletePost(id);
+
+                Map<String, String> result = new HashMap<>();
+                result.put("id", id);
+
+                return ResponseEntity.ok(new SuccessResponse(result));
+            } else {
+                return ResponseEntity.badRequest().body(new ErrorResponse("수정할 권한이 없는 게시글입니다."));
+            }
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("조회된 게시글이 없습니다."));
         }
