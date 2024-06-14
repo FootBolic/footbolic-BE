@@ -9,6 +9,7 @@ import com.footbolic.api.board.dto.BoardDto;
 import com.footbolic.api.comment.dto.CommentDto;
 import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.post.entity.PostEntity;
+import com.footbolic.api.recommendation.dto.PostRecommendationDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,6 +54,11 @@ public class PostDto {
     @Builder.Default
     private List<CommentDto> comments = new ArrayList<>();
 
+    @Builder.Default
+    private List<PostRecommendationDto> recommendations = new ArrayList<>();
+
+    private long recommendationsSize;
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createdAt;
@@ -71,6 +77,9 @@ public class PostDto {
 
     @JsonProperty("isEditable")
     private boolean isEditable;
+
+    @JsonProperty("isRecommended")
+    private boolean isRecommended;
 
     public PostEntity toEntity() {
         return PostEntity.builder()

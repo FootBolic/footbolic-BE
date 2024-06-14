@@ -4,6 +4,7 @@ import com.footbolic.api.board.entity.BoardEntity;
 import com.footbolic.api.comment.entity.CommentEntity;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
 import com.footbolic.api.post.dto.PostDto;
+import com.footbolic.api.recommendation.entity.PostRecommendationEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -11,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -55,7 +58,24 @@ public class PostEntity extends ExtendedBaseEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CommentEntity> comments = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private List<PostRecommendationEntity> recommendations = new ArrayList<>();
+
     public PostDto toDto() {
+        boolean isRecommended = false;
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && recommendations != null) {
+            for (PostRecommendationEntity recommendation : recommendations) {
+                if (recommendation.getMemberId().equals(authentication.getCredentials().toString())) {
+                    isRecommended = true;
+                    break;
+                }
+            }
+        }
+
         return PostDto.builder()
                 .id(getId())
                 .title(title)
@@ -65,6 +85,8 @@ public class PostEntity extends ExtendedBaseEntity {
                 .isAnnouncement(isAnnouncement)
                 .announcementStartsAt(announcementStartsAt)
                 .announcementEndsAt(announcementEndsAt)
+                .recommendationsSize(recommendations == null ? 0 : recommendations.size())
+                .isRecommended(isRecommended)
                 .createdAt(getCreatedAt())
                 .createMemberId(getCreateMemberId())
                 .createdBy(getCreatedBy() == null ? null : getCreatedBy().toDto())

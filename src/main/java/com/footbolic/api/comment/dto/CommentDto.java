@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.footbolic.api.comment.entity.CommentEntity;
 import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.post.dto.PostDto;
+import com.footbolic.api.recommendation.dto.CommentRecommendationDto;
 import com.footbolic.api.reply.dto.ReplyDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -37,6 +38,11 @@ public class CommentDto {
     @Builder.Default
     private List<ReplyDto> replies = new ArrayList<>();
 
+    @Builder.Default
+    private List<CommentRecommendationDto> recommendations = new ArrayList<>();
+
+    private long recommendationsSize;
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createdAt;
@@ -55,6 +61,9 @@ public class CommentDto {
 
     @JsonProperty("isEditable")
     private boolean isEditable;
+
+    @JsonProperty("isRecommended")
+    private boolean isRecommended;
 
     public CommentEntity toEntity() {
         return CommentEntity.builder()

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.footbolic.api.comment.dto.CommentDto;
 import com.footbolic.api.member.dto.MemberDto;
+import com.footbolic.api.recommendation.dto.ReplyRecommendationDto;
 import com.footbolic.api.reply.entity.ReplyEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Schema(name = "답글 DTO")
 @Data
@@ -30,6 +33,11 @@ public class ReplyDto {
     private CommentDto comment;
 
     private String content;
+
+    @Builder.Default
+    private List<ReplyRecommendationDto> recommendations = new ArrayList<>();
+
+    private long recommendationsSize;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -49,6 +57,9 @@ public class ReplyDto {
 
     @JsonProperty("isEditable")
     private boolean isEditable;
+
+    @JsonProperty("isRecommended")
+    private boolean isRecommended;
 
     public ReplyEntity toEntity() {
         return ReplyEntity.builder()

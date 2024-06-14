@@ -39,11 +39,11 @@ public class ReplyController {
     })
     @GetMapping
     public SuccessResponse getReplyList(
-            @RequestParam(name = "postId", required = false) String postId
+            @RequestParam(name = "commentId", required = false) String commentId
     ) {
         Map<String, Object> result = new HashMap<>();
-        result.put("replies", replyService.findAll(postId));
-        result.put("size", replyService.count(postId));
+        result.put("replies", replyService.findAll(commentId));
+        result.put("size", replyService.count(commentId));
 
         return new SuccessResponse(result);
     }

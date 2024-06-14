@@ -19,7 +19,6 @@ public class ReplyRepositoryCustomImpl implements ReplyRepositoryCustom {
 
     @Override
     public List<ReplyEntity> findAll(String commentId) {
-
         JPAQuery<ReplyEntity> query = queryFactory.selectFrom(replyEntity);
 
         if (commentId != null && !commentId.isBlank()) {
