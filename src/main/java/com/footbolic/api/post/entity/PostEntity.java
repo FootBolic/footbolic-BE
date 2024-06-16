@@ -34,7 +34,7 @@ public class PostEntity extends ExtendedBaseEntity {
     @JoinColumn(name = "board_id", insertable = false, updatable = false)
     private BoardEntity board;
 
-    @Column(name = "title", nullable = false, length = 20)
+    @Column(name = "title", nullable = false, length = 100)
     private String title;
 
     @Column(name = "content", columnDefinition = "TEXT")
@@ -59,7 +59,7 @@ public class PostEntity extends ExtendedBaseEntity {
     private List<CommentEntity> comments = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<PostRecommendationEntity> recommendations = new ArrayList<>();
 
     public PostDto toDto() {

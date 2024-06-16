@@ -34,11 +34,12 @@ public class CommentEntity extends ExtendedBaseEntity {
     private String content;
 
     @Builder.Default
-    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OrderBy("id ASC")
     private List<ReplyEntity> replies = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CommentRecommendationEntity> recommendations = new ArrayList<>();
 
     public CommentDto toDto() {

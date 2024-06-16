@@ -33,7 +33,7 @@ public class ReplyEntity extends ExtendedBaseEntity {
     private String content;
 
     @Builder.Default
-    @OneToMany(mappedBy = "reply", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "reply", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ReplyRecommendationEntity> recommendations = new ArrayList<>();
 
     public ReplyDto toDto() {
