@@ -1,7 +1,7 @@
-package com.footbolic.api.image.entity;
+package com.footbolic.api.file.entity;
 
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
-import com.footbolic.api.image.dto.ImageDto;
+import com.footbolic.api.file.dto.FileDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -12,9 +12,9 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor
-@Entity(name = "ImageEntity")
-@Table(name = "Image")
-public class ImageEntity extends ExtendedBaseEntity {
+@Entity(name = "FileEntity")
+@Table(name = "File")
+public class FileEntity extends ExtendedBaseEntity {
 
     @Column(name = "original_name", nullable = false, length = 100)
     private String originalName;
@@ -31,14 +31,18 @@ public class ImageEntity extends ExtendedBaseEntity {
     @Column(name = "path", nullable = false, length = 100)
     private String path;
 
-    public ImageDto toDto() {
-        return ImageDto.builder()
+    @Column(name = "extension", nullable = false, length = 20)
+    private String extension;
+
+    public FileDto toDto() {
+        return FileDto.builder()
                 .id(getId())
                 .originalName(originalName)
                 .newName(newName)
                 .type(type)
                 .size(size)
                 .path(path)
+                .extension(extension)
                 .createdAt(getCreatedAt())
                 .createMemberId(getCreateMemberId())
                 .createdBy(getCreatedBy() == null ? null : getCreatedBy().toDto())

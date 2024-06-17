@@ -1,10 +1,10 @@
-package com.footbolic.api.image.dto;
+package com.footbolic.api.file.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.footbolic.api.image.entity.ImageEntity;
+import com.footbolic.api.file.entity.FileEntity;
 import com.footbolic.api.member.dto.MemberDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -12,14 +12,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.File;
 import java.time.LocalDateTime;
 
-@Schema(name = "답글 DTO")
+@Schema(name = "파일 DTO")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImageDto {
+public class FileDto {
 
     private String id;
 
@@ -32,6 +33,8 @@ public class ImageDto {
     private long size;
 
     private String path;
+
+    private String extension;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -49,14 +52,15 @@ public class ImageDto {
 
     private MemberDto updatedBy;
 
-    public ImageEntity toEntity() {
-        return ImageEntity.builder()
+    public FileEntity toEntity() {
+        return FileEntity.builder()
                 .id(id)
                 .originalName(originalName)
                 .newName(newName)
                 .type(type)
                 .size(size)
                 .path(path)
+                .extension(extension)
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)
                 .createdBy(createdBy == null ? null : createdBy.toEntity())
