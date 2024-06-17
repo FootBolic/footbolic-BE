@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.footbolic.api.board.dto.BoardDto;
+import com.footbolic.api.comment.dto.CommentDto;
 import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.post.entity.PostEntity;
+import com.footbolic.api.recommendation.dto.PostRecommendationDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +17,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Schema(name = "게시글 DTO")
 @Data
@@ -47,7 +51,13 @@ public class PostDto {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime announcementEndsAt;
 
-//    private List<CommentEntity> comments = new ArrayList<>();
+    @Builder.Default
+    private List<CommentDto> comments = new ArrayList<>();
+
+    @Builder.Default
+    private List<PostRecommendationDto> recommendations = new ArrayList<>();
+
+    private long recommendationsSize;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -65,13 +75,18 @@ public class PostDto {
 
     private MemberDto updatedBy;
 
+    @JsonProperty("isEditable")
+    private boolean isEditable;
+
+    @JsonProperty("isRecommended")
+    private boolean isRecommended;
+
     public PostEntity toEntity() {
         return PostEntity.builder()
                 .id(id)
                 .title(title)
                 .content(content)
                 .boardId(boardId)
-                .board(board == null ? null : board.toEntity())
                 .isSecret(isSecret)
                 .isAnnouncement(isAnnouncement)
                 .announcementStartsAt(announcementStartsAt)

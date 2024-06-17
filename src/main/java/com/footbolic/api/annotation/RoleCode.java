@@ -6,6 +6,8 @@ public @interface RoleCode {
 
     String ROLE_SYS_MNG = "ROLE_SYS_MNG";
 
+    String ROLE_USER = "ROLE_USER";
+
     String ROLE_MENU_MNG = "ROLE_MENU_MNG";
 
     String ROLE_MEMBER_MNG = "ROLE_MEMBER_MNG";

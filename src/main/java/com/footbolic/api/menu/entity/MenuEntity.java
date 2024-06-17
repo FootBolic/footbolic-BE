@@ -23,6 +23,9 @@ public class MenuEntity extends ExtendedBaseEntity {
     @Column(name = "parent_id", length = 30)
     private String parentId;
 
+    @Transient
+    private MenuEntity parent;
+
     @Builder.Default
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "parent_id", insertable = false, updatable = false)
@@ -60,6 +63,7 @@ public class MenuEntity extends ExtendedBaseEntity {
         return MenuDto.builder()
                 .id(getId())
                 .parentId(parentId)
+                .parent(parent == null ? null : parent.toDto())
                 .children(children == null ? null : children.stream().map(MenuEntity::toDto).toList())
                 .title(title)
                 .programId(programId)
@@ -75,6 +79,19 @@ public class MenuEntity extends ExtendedBaseEntity {
                 .updatedAt(getUpdatedAt())
                 .updateMemberId(getUpdateMemberId())
                 .updatedBy(getUpdatedBy() == null ? null : getUpdatedBy().toDto())
+                .build();
+    }
+
+    public MenuDto toPublicDto() {
+        return MenuDto.builder()
+                .id(getId())
+                .parentId(parentId)
+                .title(title)
+                .programId(programId)
+                .program(program == null ? null : program.toDto())
+                .detailId(detailId)
+                .iconCodeId(iconCodeId)
+                .isUsed(isUsed)
                 .build();
     }
 

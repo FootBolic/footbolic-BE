@@ -24,16 +24,4 @@ public class MenuRepositoryCustomImpl implements MenuRepositoryCustom {
                 .fetch();
     }
 
-    @Override
-    public List<MenuEntity> findUsedMenus() {
-        return queryFactory
-                .selectFrom(menuEntity)
-                .where(
-                        menuEntity.parentId.isNull()
-                                .and(menuEntity.isUsed).eq(true)
-                )
-                .orderBy(menuEntity.order.asc(), menuEntity.id.desc())
-                .fetch();
-    }
-
 }

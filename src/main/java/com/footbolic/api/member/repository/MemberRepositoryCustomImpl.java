@@ -1,7 +1,6 @@
 package com.footbolic.api.member.repository;
 
 import com.footbolic.api.member.entity.MemberEntity;
-import com.querydsl.core.types.Order;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -101,6 +100,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
         queryFactory.update(memberEntity)
                 .set(memberEntity.refreshToken, member.getRefreshToken())
                 .set(memberEntity.refreshTokenExpiresAt, member.getRefreshTokenExpiresAt())
+                .set(memberEntity.updatedAt, LocalDateTime.now())
                 .where(memberEntity.id.eq(member.getId()))
                 .execute();
     }

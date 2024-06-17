@@ -46,6 +46,27 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    public MenuDto findPath(String id) {
+        MenuDto menu = menuRepository.findById(id).map(MenuEntity::toPublicDto).orElse(null);
+
+        if (menu != null && menu.isUsed()) {
+            if (menu.getParentId() != null && !menu.getParentId().isBlank()) {
+                MenuDto parent = findPath(menu.getParentId());
+
+                if (parent == null || parent.getId().isBlank()) {
+                    return null;
+                } else {
+                    menu.setParent(parent);
+                }
+            }
+
+            return menu;
+        }
+
+        return null;
+    }
+
+    @Override
     public MenuDto saveMenu(MenuDto menu) {
         MenuEntity createdMenu = menuRepository.save(menu.toEntity());
         return createdMenu.toDto();

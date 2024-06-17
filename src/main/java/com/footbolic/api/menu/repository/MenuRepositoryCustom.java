@@ -7,7 +7,4 @@ import java.util.List;
 public interface MenuRepositoryCustom {
 
     List<MenuEntity> findAll();
-
-    List<MenuEntity> findUsedMenus();
-
 }

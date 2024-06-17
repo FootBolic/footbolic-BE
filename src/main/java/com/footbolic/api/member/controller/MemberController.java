@@ -129,6 +129,9 @@ public class MemberController {
     }
 
     @Operation(summary = "회원 단건 조회", description = "Access Token으로 회원정보 조회")
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_USER)
+    })
     @PostMapping("/me")
     public ResponseEntity<BaseResponse> getTokenMember(
             HttpServletRequest request,
@@ -169,6 +172,9 @@ public class MemberController {
     }
 
     @Operation(summary = "회원 회원가입 플랫폼 조회", description = "Access Token에 존재하는 회원의 회원가입 플랫폼 조회")
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_USER)
+    })
     @PostMapping("/me/platform")
     public ResponseEntity<BaseResponse> checkPlatform(
             HttpServletRequest request,
@@ -240,6 +246,9 @@ public class MemberController {
 
     @Operation(summary = "Access Token으로 회원 수정", description = "Access Token으로 전달 받은 회원을 파라미터 정보로 수정")
     @Parameter(name = "member", description = "수정할 회원 객체", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_USER)
+    })
     @PatchMapping("/me")
     public ResponseEntity<BaseResponse> updateTokenMember(
             HttpServletRequest request,
@@ -334,6 +343,9 @@ public class MemberController {
 
     @Operation(summary = "Access Token으로 회원 탈퇴 처리", description = "Access Token으로 회원 탈퇴 처리")
     @Parameter(name = "access_token", description = "로그인 API 제공자로부터 받은 Access Token", required = true)
+    @RoleCheck(codes = {
+            @RoleCode(code = RoleCode.ROLE_USER)
+    })
     @DeleteMapping("/me")
     public ResponseEntity<BaseResponse> deleteTokenMember(
             HttpServletRequest request,

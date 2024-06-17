@@ -29,6 +29,8 @@ public class MenuDto {
 
     private String parentId;
 
+    private MenuDto parent;
+
     @Builder.Default
     private List<MenuDto> children = new ArrayList<>();
 

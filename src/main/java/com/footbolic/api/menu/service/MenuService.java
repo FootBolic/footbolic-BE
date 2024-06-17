@@ -14,6 +14,8 @@ public interface MenuService {
 
     MenuDto findById(String id);
 
+    MenuDto findPath(String id);
+
     MenuDto saveMenu(MenuDto menu);
 
     void deleteMenu(String id);
