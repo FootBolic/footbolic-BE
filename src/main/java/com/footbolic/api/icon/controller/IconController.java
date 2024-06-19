@@ -52,6 +52,15 @@ public class IconController {
         return new SuccessResponse(result);
     }
 
+    @GetMapping("/all")
+    public SuccessResponse getAllIcons() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("icons", iconService.findAll());
+        result.put("size", iconService.count(null, null));
+
+        return new SuccessResponse(result);
+    }
+
     @Operation(summary = "아이콘 생성", description = "파라미터로 전달 받은 아이콘을 생성한다.")
     @Parameter(name = "icon", description = "생성할 아이콘 객체", required = true)
     @RoleCheck(codes = {

@@ -27,6 +27,8 @@ public class IconDto {
 
     private String code;
 
+    private String type;
+
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createdAt;
@@ -48,6 +50,7 @@ public class IconDto {
                 .id(id)
                 .title(title)
                 .code(code)
+                .type(type)
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)
                 .createdBy(createdBy == null ? null : createdBy.toEntity())

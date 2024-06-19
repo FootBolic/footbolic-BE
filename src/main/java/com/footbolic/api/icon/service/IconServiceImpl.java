@@ -26,6 +26,14 @@ public class IconServiceImpl implements IconService {
     }
 
     @Override
+    public List<IconDto> findAll() {
+        return iconRepository.findAll()
+                .stream()
+                .map(IconEntity::toDto)
+                .toList();
+    }
+
+    @Override
     public long count(String searchTitle, String searchCode) {
         return iconRepository.count(searchTitle, searchCode);
     }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.footbolic.api.icon.dto.IconDto;
 import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.menu.entity.MenuEntity;
 import com.footbolic.api.program.dto.ProgramDto;
@@ -44,7 +45,9 @@ public class MenuDto {
 
     private Object detail;
 
-    private String iconCodeId;
+    private String iconId;
+
+    private IconDto icon;
 
     @JsonProperty("isUsed")
     private boolean isUsed;
@@ -76,7 +79,7 @@ public class MenuDto {
                 .programId(programId)
                 .program(program == null ? null : program.toEntity())
                 .detailId(detailId)
-                .iconCodeId(iconCodeId)
+                .iconId(iconId)
                 .isUsed(isUsed)
                 .order(order)
                 .createdAt(createdAt)

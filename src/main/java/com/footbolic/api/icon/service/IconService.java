@@ -9,6 +9,8 @@ public interface IconService {
 
     List<IconDto> findAll(Pageable pageable, String searchTitle, String searchCode);
 
+    List<IconDto> findAll();
+
     long count(String searchTitle, String searchCode);
 
     IconDto findById(String id);
