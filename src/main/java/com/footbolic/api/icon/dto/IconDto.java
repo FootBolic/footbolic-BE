@@ -1,14 +1,11 @@
-package com.footbolic.api.menu.dto;
+package com.footbolic.api.icon.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.footbolic.api.icon.dto.IconDto;
+import com.footbolic.api.icon.entity.IconEntity;
 import com.footbolic.api.member.dto.MemberDto;
-import com.footbolic.api.menu.entity.MenuEntity;
-import com.footbolic.api.program.dto.ProgramDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,43 +13,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Schema(name = "Menu 객체")
+@Schema(name = "아이콘 DTO")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuDto {
+public class IconDto {
 
     private String id;
 
-    private String parentId;
-
-    private MenuDto parent;
-
-    @Builder.Default
-    private List<MenuDto> children = new ArrayList<>();
-
     private String title;
 
-    private String programId;
+    private String code;
 
-    private ProgramDto program;
-
-    private String detailId;
-
-    private Object detail;
-
-    private String iconId;
-
-    private IconDto icon;
-
-    @JsonProperty("isUsed")
-    private boolean isUsed;
-
-    private long order;
+    private String type;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -70,18 +45,12 @@ public class MenuDto {
 
     private MemberDto updatedBy;
 
-    public MenuEntity toEntity() {
-        return MenuEntity.builder()
+    public IconEntity toEntity() {
+        return IconEntity.builder()
                 .id(id)
-                .parentId(parentId)
-                .children(children == null ? null : children.stream().map(MenuDto::toEntity).toList())
                 .title(title)
-                .programId(programId)
-                .program(program == null ? null : program.toEntity())
-                .detailId(detailId)
-                .iconId(iconId)
-                .isUsed(isUsed)
-                .order(order)
+                .code(code)
+                .type(type)
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)
                 .createdBy(createdBy == null ? null : createdBy.toEntity())
@@ -90,5 +59,4 @@ public class MenuDto {
                 .updatedBy(updatedBy == null ? null : updatedBy.toEntity())
                 .build();
     }
-
 }

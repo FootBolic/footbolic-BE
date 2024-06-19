@@ -57,6 +57,7 @@ public class AuthorizationController {
     public SuccessResponse getAllAuthorizationList() {
         Map<String, Object> result = new HashMap<>();
         result.put("authorizations", authorizationService.findAll());
+        result.put("size", authorizationService.count(null, null));
 
         return new SuccessResponse(result);
     }

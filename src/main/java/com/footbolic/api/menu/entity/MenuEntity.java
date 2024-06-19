@@ -1,6 +1,7 @@
 package com.footbolic.api.menu.entity;
 
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
+import com.footbolic.api.icon.entity.IconEntity;
 import com.footbolic.api.menu.dto.MenuDto;
 import com.footbolic.api.program.entity.ProgramEntity;
 import jakarta.persistence.*;
@@ -48,8 +49,12 @@ public class MenuEntity extends ExtendedBaseEntity {
     @Transient
     private Object detail;
 
-    @Column(name = "icon_code_id", length = 30)
-    private String iconCodeId;
+    @Column(name = "icon_id", length = 30)
+    private String iconId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "icon_id", insertable = false, updatable = false)
+    private IconEntity icon;
 
     @ColumnDefault("true")
     @Column(name = "is_used", columnDefinition = "TINYINT(1)", nullable = false)
@@ -70,7 +75,8 @@ public class MenuEntity extends ExtendedBaseEntity {
                 .program(program == null ? null : program.toDto())
                 .detailId(detailId)
                 .detail(detail)
-                .iconCodeId(iconCodeId)
+                .iconId(iconId)
+                .icon(icon == null ? null : icon.toDto())
                 .isUsed(isUsed)
                 .order(order)
                 .createdAt(getCreatedAt())
@@ -90,7 +96,8 @@ public class MenuEntity extends ExtendedBaseEntity {
                 .programId(programId)
                 .program(program == null ? null : program.toDto())
                 .detailId(detailId)
-                .iconCodeId(iconCodeId)
+                .iconId(iconId)
+                .icon(icon == null ? null : icon.toDto())
                 .isUsed(isUsed)
                 .build();
     }
