@@ -27,10 +27,10 @@ public class IconEntity extends ExtendedBaseEntity {
     @Column(name = "title", nullable = false, length = 20)
     private String title;
 
-    @Column(name = "code", nullable = false , length = 30)
+    @Column(name = "code", nullable = false, length = 30)
     private String code;
 
-    @Column(name = "type", nullable = false , length = 20)
+    @Column(name = "type", length = 20)
     private String type;
 
     @Transient
