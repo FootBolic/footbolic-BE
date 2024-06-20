@@ -58,8 +58,13 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void deleteFile(String id) {
-        fileRepository.deleteById(id);
+    public boolean delete(FileDto file) {
+        boolean result = deleteFile(file);
+        if (result) {
+            fileRepository.deleteById(file.getId());
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -100,6 +105,13 @@ public class FileServiceImpl implements FileService {
         } catch (IOException e) {
             log.error(e.toString());
         }
+    }
+
+    private boolean deleteFile(FileDto file) {
+        File deleteDirectory = new File(file.getPath() + file.getNewName() + "." + file.getExtension());
+        if (deleteDirectory.exists()) return deleteDirectory.delete();
+        return false;
+
     }
 
 }

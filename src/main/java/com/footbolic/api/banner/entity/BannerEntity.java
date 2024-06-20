@@ -24,8 +24,8 @@ public class BannerEntity extends ExtendedBaseEntity {
     @Column(name = "file_id", nullable = false, length = 30)
     private String fileId;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "file_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "file_id", insertable = false, updatable = false)
     private FileEntity file;
 
     @ColumnDefault("false")
