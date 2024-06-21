@@ -39,7 +39,7 @@ public class BannerController {
     @Parameter(name = "page", description = "결과 목록 페이지")
     @ResponseStatus(HttpStatus.OK)
     @RoleCheck(codes = {
-            @RoleCode(code = RoleCode.ROLE_PRGRM_MNG)
+            @RoleCode(code = RoleCode.ROLE_BANNER_MNG)
     })
     @GetMapping
     public SuccessResponse getBannerList(
@@ -57,7 +57,7 @@ public class BannerController {
     @Operation(summary = "배너 생성", description = "파라미터로 전달 받은 배너을 생성한다.")
     @Parameter(name = "banner", description = "생성할 배너 객체", required = true)
     @RoleCheck(codes = {
-            @RoleCode(code = RoleCode.ROLE_PRGRM_MNG)
+            @RoleCode(code = RoleCode.ROLE_BANNER_MNG)
     })
     @PostMapping
     public ResponseEntity<BaseResponse> createBanner(
@@ -74,7 +74,7 @@ public class BannerController {
     @Operation(summary = "배너 단건 조회", description = "전달 받은 식별번호를 가진 배너 조회한다.")
     @Parameter(name = "id", description = "배너 식별번호", required = true)
     @RoleCheck(codes = {
-            @RoleCode(code = RoleCode.ROLE_PRGRM_MNG)
+            @RoleCode(code = RoleCode.ROLE_BANNER_MNG)
     })
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse> getBanner(
@@ -95,7 +95,7 @@ public class BannerController {
     @Operation(summary = "배너 수정", description = "파라미터로 전달 받은 배너을 수정한다.")
     @Parameter(name = "banner", description = "수정할 배너 객체", required = true)
     @RoleCheck(codes = {
-            @RoleCode(code = RoleCode.ROLE_PRGRM_MNG)
+            @RoleCode(code = RoleCode.ROLE_BANNER_MNG)
     })
     @PatchMapping
     public ResponseEntity<BaseResponse> updateBanner(
@@ -117,7 +117,7 @@ public class BannerController {
 
     @Operation(summary = "배너 삭제", description = "제공된 식별번호를 가진 배너 삭제한다.")
     @RoleCheck(codes = {
-            @RoleCode(code = RoleCode.ROLE_PRGRM_MNG)
+            @RoleCode(code = RoleCode.ROLE_BANNER_MNG)
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deleteBanner(

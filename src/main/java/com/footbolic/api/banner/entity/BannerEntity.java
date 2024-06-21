@@ -28,6 +28,9 @@ public class BannerEntity extends ExtendedBaseEntity {
     @JoinColumn(name = "file_id", insertable = false, updatable = false)
     private FileEntity file;
 
+    @Column(name = "link", length = 200)
+    private String link;
+
     @ColumnDefault("false")
     @Column(name = "is_mobile", columnDefinition = "TINYINT(1)", nullable = false)
     private boolean isMobile;
@@ -42,25 +45,17 @@ public class BannerEntity extends ExtendedBaseEntity {
     @Column(name = "ends_at", columnDefinition = "DATETIME")
     private LocalDateTime endsAt;
 
-    @ColumnDefault("false")
-    @Column(name = "is_linked", columnDefinition = "TINYINT(1)", nullable = false)
-    private boolean isLinked;
-
-    @Column(name = "link_address", length = 100)
-    private String linkAddress;
-
     public BannerDto toDto() {
         return BannerDto.builder()
                 .id(getId())
                 .title(title)
                 .fileId(fileId)
                 .file(file == null ? null : file.toDto())
+                .link(link)
                 .isMobile(isMobile)
-                .isLinked(isLinked)
+                .isTimeLimited(isTimeLimited)
                 .startsAt(startsAt)
                 .endsAt(endsAt)
-                .isLinked(isLinked)
-                .linkAddress(linkAddress)
                 .createdAt(getCreatedAt())
                 .createMemberId(getCreateMemberId())
                 .createdBy(getCreatedBy() == null ? null : getCreatedBy().toDto())

@@ -1,5 +1,6 @@
 package com.footbolic.api.banner.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -30,8 +31,12 @@ public class BannerDto {
 
     private FileDto file;
 
+    private String link;
+
+    @JsonProperty("isMobile")
     private boolean isMobile;
 
+    @JsonProperty("isTimeLimited")
     private boolean isTimeLimited;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -41,10 +46,6 @@ public class BannerDto {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime endsAt;
-
-    private boolean isLinked;
-
-    private String linkAddress;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -67,12 +68,11 @@ public class BannerDto {
                 .id(id)
                 .title(title)
                 .fileId(fileId)
+                .link(link)
                 .isMobile(isMobile)
-                .isLinked(isLinked)
+                .isTimeLimited(isTimeLimited)
                 .startsAt(startsAt)
                 .endsAt(endsAt)
-                .isLinked(isLinked)
-                .linkAddress(linkAddress)
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)
                 .createdBy(createdBy == null ? null : createdBy.toEntity())
