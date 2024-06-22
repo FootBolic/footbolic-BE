@@ -45,11 +45,11 @@ public class BannerController {
     public SuccessResponse getBannerList(
             Pageable pageable,
             @RequestParam(name = "searchTitle", required = false) String searchTitle,
-            @RequestParam(name = "searchCreatedAt", required = false) LocalDateTime searchCreatedAt
+            @RequestParam(name = "searchDate", required = false) LocalDateTime searchDate
     ) {
         Map<String, Object> result = new HashMap<>();
-        result.put("banners", bannerService.findAll(pageable, searchTitle, searchCreatedAt));
-        result.put("size", bannerService.count(searchTitle, searchCreatedAt));
+        result.put("banners", bannerService.findAll(pageable, searchTitle, searchDate));
+        result.put("size", bannerService.count(searchTitle, searchDate));
 
         return new SuccessResponse(result);
     }
