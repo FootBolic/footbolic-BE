@@ -93,27 +93,30 @@ public class FileController {
     ) {
         if (id == null || id.isBlank()) {
             return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 파일 식별번호입니다."));
-        } else if (fileService.existsById(id)) {
-            FileDto target = fileService.findById(id);
-
-            String memberId = authentication.getCredentials().toString();
-            List<String> memberRoleCodes = authentication.getAuthorities()
-                    .stream()
-                    .map(GrantedAuthority::getAuthority)
-                    .toList();
-
-            if (target.getCreateMemberId().equals(memberId) || memberRoleCodes.contains(RoleCode.ROLE_SYS_MNG)) {
-                fileService.deleteFile(id);
-
-                Map<String, String> result = new HashMap<>();
-                result.put("id", id);
-
-                return ResponseEntity.ok(new SuccessResponse(result));
-            } else {
-                return ResponseEntity.badRequest().body(new ErrorResponse("삭제할 권한이 없는 파일입니다."));
-            }
         } else {
-            return ResponseEntity.badRequest().body(new ErrorResponse("조회된 파일이 없습니다."));
+            FileDto file = fileService.findById(id);
+            if (file != null) {
+                FileDto target = fileService.findById(id);
+
+                String memberId = authentication.getCredentials().toString();
+                List<String> memberRoleCodes = authentication.getAuthorities()
+                        .stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .toList();
+
+                if (target.getCreateMemberId().equals(memberId) || memberRoleCodes.contains(RoleCode.ROLE_SYS_MNG)) {
+                    fileService.delete(file);
+
+                    Map<String, String> result = new HashMap<>();
+                    result.put("id", id);
+
+                    return ResponseEntity.ok(new SuccessResponse(result));
+                } else {
+                    return ResponseEntity.badRequest().body(new ErrorResponse("삭제할 권한이 없는 파일입니다."));
+                }
+            } else {
+                return ResponseEntity.badRequest().body(new ErrorResponse("조회된 파일이 없습니다."));
+            }
         }
     }
 }

@@ -17,7 +17,7 @@ public interface FileService {
 
     FileDto save(MultipartFile file);
 
-    void deleteFile(String id);
+    boolean delete(FileDto file);
 
     boolean existsById(String id);
 }

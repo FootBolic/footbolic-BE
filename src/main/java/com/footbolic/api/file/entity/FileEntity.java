@@ -1,10 +1,9 @@
 package com.footbolic.api.file.entity;
 
+import com.footbolic.api.banner.entity.BannerEntity;
 import com.footbolic.api.common.entity.ExtendedBaseEntity;
 import com.footbolic.api.file.dto.FileDto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -33,6 +32,9 @@ public class FileEntity extends ExtendedBaseEntity {
 
     @Column(name = "extension", nullable = false, length = 20)
     private String extension;
+
+    @OneToOne(mappedBy = "file", fetch = FetchType.LAZY)
+    private BannerEntity banner;
 
     public FileDto toDto() {
         return FileDto.builder()
