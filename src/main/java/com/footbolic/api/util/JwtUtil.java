@@ -47,6 +47,15 @@ public class JwtUtil {
 
     private final Key accessKey;
 
+    @Value("${profile.active}")
+    private String ACTIVE_PROFILE;
+
+    @Value("${domain.prod}")
+    private String PROD_DOMAIN;
+
+    @Value("${domain.dev}")
+    private String DEV_DOMAIN;
+
     public JwtUtil(
             @Value("${jwt.secret.refresh}") String refreshSecretKey,
             @Value("${jwt.secret.access}") String accessSecretKey
@@ -260,11 +269,13 @@ public class JwtUtil {
     public void issueRefreshToken(HttpServletResponse response, String refreshToken) {
         Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken);
 
+        String domain = ACTIVE_PROFILE != null && ACTIVE_PROFILE.equals("prod") ? PROD_DOMAIN : DEV_DOMAIN;
+
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setMaxAge((180 * 24 * 60 * 60) - (60 * 60));
         cookie.setPath("/");
-        cookie.setDomain("localhost");
+        cookie.setDomain(domain);
         cookie.setAttribute("SameSite", "none");
 
         response.addCookie(cookie);
