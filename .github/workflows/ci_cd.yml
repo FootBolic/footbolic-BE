@@ -21,18 +21,26 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
-    - name: Gradle Build Action
-      uses: gradle/gradle-build-action@v3.5.0
-      with:
-        gradle-version: 8.4
-        arguments: build
+    # - name: Gradle Build Action
+    #   uses: gradle/gradle-build-action@v3.5.0
+    #   with:
+    #     gradle-version: 8.4
+    #     arguments: build
 
+    # application.properties 파일 생성
+    - name: Generate Environment Variables File for Production
+      run: |
+        echo "$APPLICATION_PROPERTIES" >> ./src/main/resources/application.properties
+      env:
+        APPLICATION_PROPERTIES: ${{ secrets.APPLICATION_PROPERTIES }}
+
+    # gradlew 실행 권한 부여
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     
+    # 테스트 Skip 하고 clean build
     - name: Build with Gradle
-      # run: ./gradlew clean build
-      run: ./gradlew clean build -x test # 테스트 Skip
+      run: ./gradlew clean build -x test
 
     # 디렉토리 생성
     - name: Make Directory
@@ -42,10 +50,12 @@ jobs:
     - name: Copy Jar
       run: cp ./build/libs/*.jar ./deploy
 
+    # zip 파일 생성
     - name: Make zip file
       run: zip -r ./footbolic-test.zip ./deploy
       shell: bash
 
+    # AWS 접근 환경설정
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -53,5 +63,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-northeast-2
 
+    # Amazon S3에 업로드
     - name: Upload to S3
       run: aws s3 cp --region ap-northeast-2 ./footbolic-test.zip s3:footbolic-bucket
