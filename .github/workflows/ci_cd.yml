@@ -66,3 +66,8 @@ jobs:
       uses: webfactory/create-aws-codedeploy-deployment@v0.4.0
       with:
         application: footbolic-code-deploy-application
+        deployment-group: FOOTBOLIC-WAS-CD-GROUP
+        deployment-config-name: CodeDeployDefault.AllAtOnce
+        description: Deploying to footbolic
+        file-exists-behavior: OVERWRITE
+        wait-until-deployment-ready: true
