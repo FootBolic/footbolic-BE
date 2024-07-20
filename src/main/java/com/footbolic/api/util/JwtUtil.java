@@ -272,11 +272,14 @@ public class JwtUtil {
         String domain = ACTIVE_PROFILE != null && ACTIVE_PROFILE.equals("prod") ? PROD_DOMAIN : DEV_DOMAIN;
 
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
         cookie.setMaxAge((180 * 24 * 60 * 60) - (60 * 60));
         cookie.setPath("/");
         cookie.setDomain(domain);
-        cookie.setAttribute("SameSite", "none");
+
+        if (!ACTIVE_PROFILE.equals("prod")) {
+            cookie.setSecure(true);
+            cookie.setAttribute("SameSite", "none");
+        }
 
         response.addCookie(cookie);
     }
