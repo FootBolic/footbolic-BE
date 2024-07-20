@@ -67,9 +67,9 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
-        aws deploy create-deployment \
-          --application-name footbolic-code-deploy-application \
-          --deployment-group-name FOOTBOLIC-WAS-CD-GROUP \
-          --file-exists-behavior OVERWRITE \
+        aws deploy create-deployment
+          --application-name footbolic-code-deploy-application
+          --deployment-group-name FOOTBOLIC-WAS-CD-GROUP
+          --file-exists-behavior OVERWRITE
           --s3-location bucket=footbolic-bucket,bundleType=zip,key=footbolic-test.zip
           --region ap-northeast-2
