@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-REPOSITORY=/home/footbolic/jar
+REPOSITORY=/home/ubuntu/app
 
 echo "pm2 실행중인 프로세스 종료"
 
