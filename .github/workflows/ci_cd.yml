@@ -44,6 +44,9 @@ jobs:
     - name: Copy Jar
       run: cp ./build/libs/*.jar ./deploy
 
+    - name: Rename jar
+      run: cp ./deploy/*SNAPSHOT.jar ./deploy/footbolic.jar
+
       # appspec.yml 파일 복사
     - name: Copy appspec.yml
       run: cp ./appspec.yml ./deploy

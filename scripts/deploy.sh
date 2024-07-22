@@ -1,18 +1,5 @@
 #!/bin/bash
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-echo "사용자 정보: $USER"
-
-NVM_VER=${nvm --version}
-
-echo "nvm 정보: $NVM_VER"
-
-NODE_VER=${node --version}
-
-echo "node 정보: $NODE_VER"
-
 REPOSITORY=/home/ubuntu/app
 
 echo "pm2 실행중인 프로세스 종료"
@@ -31,4 +18,6 @@ chmod +x $JAR_NAME
 
 echo "> $JAR_NAME 실행"
 
-pm2 start /home/footbolic/ecosystem.config.js
+cd $REPOSITORY
+
+pm2 start /home/ubuntu/ecosystem.config.js
