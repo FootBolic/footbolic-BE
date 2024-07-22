@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 REPOSITORY=/home/ubuntu/app
 
 echo "pm2 실행중인 프로세스 종료"
