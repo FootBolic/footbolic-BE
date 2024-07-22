@@ -46,7 +46,7 @@ jobs:
 
     # footbolic.jar로 이름 변경
     - name: Rename jar
-      run: cp ./deploy/*SNAPSHOT.jar ./deploy/footbolic.jar
+      run: mv ./deploy/*SNAPSHOT.jar ./deploy/footbolic.jar
 
     # appspec.yml 파일 복사
     - name: Copy appspec.yml
