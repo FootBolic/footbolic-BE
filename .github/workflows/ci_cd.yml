@@ -39,7 +39,7 @@ jobs:
     # 디렉토리 생성
     - name: Make Directory
       run: mkdir -p deploy
-        
+
     # Jar 파일 복사
     - name: Copy Jar
       run: cp ./build/libs/*.jar ./deploy
@@ -50,7 +50,7 @@ jobs:
 
       # deploy.sh 파일 복사
     - name: Copy deploy.sh
-      run: cp ./scripts/deploy.sh ./deploy/scripts
+      run: cp ./scripts/deploy.sh ./deploy
 
     # zip 파일 생성
     - name: Make zip file
