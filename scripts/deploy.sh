@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+USER_INFO=${id}
+
+echo "사용자 정보: $USER_INFO"
+
+NVM_VER=${nvm --version}
+
+echo "nvm 정보: $NVM_VER"
+
+NODE_VER=${node --version}
+
+echo "node 정보: $NODE_VER"
+
 REPOSITORY=/home/ubuntu/app
 
 echo "pm2 실행중인 프로세스 종료"
