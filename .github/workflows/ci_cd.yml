@@ -37,12 +37,12 @@ jobs:
       run: ./gradlew clean build -x test
 
     # 디렉토리 생성
-#    - name: Make Directory
-#      run: mkdir -p deploy
+    - name: Make Directory
+      run: mkdir -p deploy
         
     # Jar 파일 복사
-#    - name: Copy Jar
-#      run: cp ./build/libs/*.jar ./deploy
+    - name: Copy Jar
+      run: cp ./build/libs/*.jar ./deploy
 
     # zip 파일 생성
     - name: Make zip file
