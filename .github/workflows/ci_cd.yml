@@ -50,7 +50,7 @@ jobs:
 
       # deploy.sh 파일 복사
     - name: Copy deploy.sh
-      run: cp ./scripts/deploy.sh ./deploy
+      run: cp ./scripts/deploy.sh ./deploy/scripts
 
     # zip 파일 생성
     - name: Make zip file
