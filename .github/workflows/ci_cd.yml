@@ -56,6 +56,10 @@ jobs:
     - name: Copy deploy.sh
       run: cp ./scripts/deploy.sh ./deploy
 
+      # healthCheck.sh 파일 복사
+    - name: Copy healthCheck.sh
+      run: cp ./scripts/healthCheck.sh ./deploy
+
     # zip 파일 생성
     - name: Make zip file
       run: zip -r ./footbolic-test.zip ./deploy

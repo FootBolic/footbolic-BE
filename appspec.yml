@@ -16,3 +16,7 @@ hooks:
     - location: deploy.sh
       timeout: 60
       runas: ubuntu
+  ValidateService:
+    - location: healthCheck.sh
+      timeout: 60
+      runas: ec2-user
