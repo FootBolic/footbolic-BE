@@ -56,7 +56,7 @@ jobs:
     - name: Copy deploy.sh
       run: cp ./scripts/deploy.sh ./deploy
 
-      # healthCheck.sh 파일 복사
+    # healthCheck.sh 파일 복사
     - name: Copy healthCheck.sh
       run: cp ./scripts/healthCheck.sh ./deploy
 
