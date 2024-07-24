@@ -62,7 +62,7 @@ jobs:
 
     # zip 파일 생성
     - name: Make zip file
-      run: zip -r ./footbolic-test.zip ./deploy
+      run: zip -r ./footbolic-was.zip ./deploy
       shell: bash
 
     # AWS 접근 환경설정
@@ -75,7 +75,7 @@ jobs:
 
     # Amazon S3에 업로드
     - name: Upload to S3
-      run: aws s3 cp ./footbolic-test.zip s3://footbolic-bucket
+      run: aws s3 cp ./footbolic-was.zip s3://footbolic-bucket
 
     # CodeDeploy 실행
     - name: Execute CodeDeploy
@@ -87,5 +87,5 @@ jobs:
           --application-name footbolic-code-deploy-application \
           --deployment-group-name FOOTBOLIC-WAS-CD-GROUP \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=footbolic-bucket,bundleType=zip,key=footbolic-test.zip \
+          --s3-location bucket=footbolic-bucket,bundleType=zip,key=footbolic-was.zip \
           --region ap-northeast-2
