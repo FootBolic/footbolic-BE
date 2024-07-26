@@ -154,6 +154,7 @@ public class MemberController {
     }
 
     @Operation(summary = "닉네임 중복 검사", description = "닉네임의 중복 여부를 검사")
+    @Parameter(name = "nickname", description = "닉네임", required = true)
     @GetMapping("/public/check")
     public ResponseEntity<BaseResponse> existsByNickname(
             @RequestParam(name = "nickname") String nickname
