@@ -76,4 +76,9 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.updateTokenInfo(member.toEntity());
     }
 
+    @Override
+    public boolean existsByNickname(String nickname) {
+        return memberRepository.existsByNickname(nickname);
+    }
+
 }

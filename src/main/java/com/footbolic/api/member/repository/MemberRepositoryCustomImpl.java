@@ -104,4 +104,12 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
                 .where(memberEntity.id.eq(member.getId()))
                 .execute();
     }
+
+    @Override
+    public boolean existsByNickname(String nickname) {
+        return !queryFactory.selectFrom(memberEntity)
+                .where(
+                        memberEntity.nickname.eq(nickname)
+                ).fetch().isEmpty();
+    }
 }
