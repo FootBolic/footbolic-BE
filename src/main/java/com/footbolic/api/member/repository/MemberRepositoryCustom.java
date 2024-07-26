@@ -17,4 +17,6 @@ public interface MemberRepositoryCustom {
 
     void updateTokenInfo(MemberEntity member);
 
+    boolean existsByNickname(String nickname);
+
 }

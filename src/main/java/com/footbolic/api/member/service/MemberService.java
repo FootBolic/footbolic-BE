@@ -27,4 +27,6 @@ public interface MemberService {
 
     void updateTokenInfo(MemberDto member);
 
+    boolean existsByNickname(String nickname);
+
 }

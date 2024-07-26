@@ -153,11 +153,25 @@ public class MemberController {
         }
     }
 
+    @Operation(summary = "닉네임 중복 검사", description = "닉네임의 중복 여부를 검사")
+    @GetMapping("/public/check")
+    public ResponseEntity<BaseResponse> existsByNickname(
+            @RequestParam(name = "nickname") String nickname
+    ) {
+        if (nickname == null || nickname.isBlank()) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원 닉네임입니다."));
+        }
+
+        return ResponseEntity.ok(new SuccessResponse(
+                Map.of("memberExists", memberService.existsByNickname(nickname))
+        ));
+    }
+
     @Operation(summary = "회원 존재 여부 조회", description = "전달 받은 API 제공 플랫폼과 식별번호를 가진 회원 존재 여부 조회")
     @Parameter(name = "id", description = "회원 식별번호", required = true)
     @Parameter(name = "platform", description = "로그인 API 제공 플랫폼", required = true)
     @GetMapping("/public/{id}")
-    public ResponseEntity<BaseResponse> memberExists(
+    public ResponseEntity<BaseResponse> existsByIdAtPlatform(
             @PathVariable(name = "id") String id,
             @RequestParam(name = "platform") String platform
     ) {
@@ -165,10 +179,9 @@ public class MemberController {
             return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원 식별번호입니다."));
         }
 
-        Map<String, Boolean> result = new HashMap<>();
-        result.put("memberExists", memberService.existsByIdAtPlatform(id, platform));
-
-        return ResponseEntity.ok(new SuccessResponse(result));
+        return ResponseEntity.ok(new SuccessResponse(
+                Map.of("memberExists", memberService.existsByIdAtPlatform(id, platform))
+        ));
     }
 
     @Operation(summary = "회원 회원가입 플랫폼 조회", description = "Access Token에 존재하는 회원의 회원가입 플랫폼 조회")
