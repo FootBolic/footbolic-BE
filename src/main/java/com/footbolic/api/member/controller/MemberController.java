@@ -158,7 +158,6 @@ public class MemberController {
     public ResponseEntity<BaseResponse> existsByNickname(
             @RequestParam(name = "nickname") String nickname
     ) {
-        log.info(">>>>>>>>>>>>> nickname = {}", nickname);
         if (nickname == null || nickname.isBlank()) {
             return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 회원 닉네임입니다."));
         }
