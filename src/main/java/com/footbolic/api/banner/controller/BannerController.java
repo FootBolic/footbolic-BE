@@ -54,6 +54,18 @@ public class BannerController {
         return new SuccessResponse(result);
     }
 
+    @Operation(summary = "게시중인 배너 목록 조회", description = "메인페이지에 게시중인 배너 목록을 조회한다.")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/public")
+    public SuccessResponse getPublicBannerList(
+            @RequestParam(name = "isMobile") boolean isMobile
+    ) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("banners", bannerService.findPublic(isMobile));
+
+        return new SuccessResponse(result);
+    }
+
     @Operation(summary = "배너 생성", description = "파라미터로 전달 받은 배너을 생성한다.")
     @Parameter(name = "banner", description = "생성할 배너 객체", required = true)
     @RoleCheck(codes = {

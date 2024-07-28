@@ -28,6 +28,14 @@ public class BannerServiceImpl implements BannerService {
     }
 
     @Override
+    public List<BannerDto> findPublic(boolean isMobile) {
+        return bannerRepository.findPublic(isMobile)
+                .stream()
+                .map(BannerEntity::toDto)
+                .toList();
+    }
+
+    @Override
     public long count(String searchTitle, LocalDateTime searchDate) {
         return bannerRepository.count(searchTitle, searchDate);
     }
