@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.footbolic.api.board.entity.BoardEntity;
 import com.footbolic.api.member.dto.MemberDto;
+import com.footbolic.api.menu.dto.MenuDto;
 import com.footbolic.api.post.dto.PostDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -62,6 +63,8 @@ public class BoardDto {
     private String updateMemberId;
 
     private MemberDto updatedBy;
+
+    private MenuDto menu;
 
     public BoardEntity toEntity() {
         return BoardEntity.builder()

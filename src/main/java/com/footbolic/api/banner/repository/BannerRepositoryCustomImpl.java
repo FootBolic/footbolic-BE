@@ -39,6 +39,28 @@ public class BannerRepositoryCustomImpl implements BannerRepositoryCustom {
     }
 
     @Override
+    public List<BannerEntity> findPublic(boolean isMobile) {
+        LocalDateTime now = LocalDateTime.now();
+        return queryFactory.selectFrom(bannerEntity)
+                .where(
+                        bannerEntity.isTimeLimited.isFalse()
+                        .or(
+                                bannerEntity.isTimeLimited.isTrue()
+                                .and(
+                                        bannerEntity.startsAt.before(LocalDateTime.now())
+                                        .and(
+                                                bannerEntity.endsAt.after(LocalDateTime.now())
+                                        )
+                                )
+                        )
+                )
+                .where(
+                        bannerEntity.isMobile.eq(isMobile)
+                )
+                .fetch();
+    }
+
+    @Override
     public long count(String searchTitle, LocalDateTime searchDate) {
         JPAQuery<BannerEntity> query = queryFactory.selectFrom(bannerEntity);
 

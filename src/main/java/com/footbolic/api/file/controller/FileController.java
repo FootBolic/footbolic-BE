@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,7 +23,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriUtils;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,11 +59,17 @@ public class FileController {
     @Operation(summary = "파일 단건 조회", description = "전달 받은 식별번호를 가진 파일을 조회한다.")
     @Parameter(name = "id", description = "파일 식별번호", required = true)
     @GetMapping("/public/images/{id}")
-    public Resource getImageFile(
+    public ResponseEntity<Resource> getImageFile(
             @PathVariable(name = "id") String id
-    ) {
+    ) throws IOException {
         FileDto file = fileService.findById(id);
-        return file != null ? fileService.getFile(file) : null;
+        MediaType mediaType = MediaType.parseMediaType(Files.probeContentType(Paths.get(
+                file.getPath() + file.getNewName() + "." + file.getExtension()
+        )));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, mediaType.toString())
+                .body(fileService.getFile(file));
+//        return file != null ? fileService.getFile(file) : null;
     }
 
     @Operation(summary = "파일 단건 조회", description = "전달 받은 식별번호를 가진 파일을 조회한다.")

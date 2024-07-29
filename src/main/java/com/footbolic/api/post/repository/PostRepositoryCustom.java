@@ -12,4 +12,10 @@ public interface PostRepositoryCustom {
 
     long count(String boardId, String searchTitle, String searchCreatedBy, LocalDateTime searchCreatedAt);
 
+    List<PostEntity> findHotPosts(Integer limit);
+
+    List<PostEntity> findNewPosts(Integer limit);
+
+    List<PostEntity> findNewPostsByBoard(String boardId, Integer limit);
+
 }

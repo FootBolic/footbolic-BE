@@ -10,6 +10,8 @@ public interface BannerService {
 
     List<BannerDto> findAll(Pageable pageable, String searchTitle, LocalDateTime searchDate);
 
+    List<BannerDto> findPublic(boolean isMobile);
+
     long count(String searchTitle, LocalDateTime searchDate);
 
     BannerDto findById(String id);

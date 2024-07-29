@@ -3,6 +3,7 @@ package com.footbolic.api.board.service;
 import com.footbolic.api.board.entity.BoardEntity;
 import com.footbolic.api.board.dto.BoardDto;
 import com.footbolic.api.board.repository.BoardRepository;
+import com.footbolic.api.menu.service.MenuService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,8 @@ import java.util.List;
 public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
+
+    private final MenuService menuService;
 
     @Override
     public List<BoardDto> findAll() {
@@ -42,8 +45,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardDto saveBoard(BoardDto role) {
-        BoardEntity createdBoard = boardRepository.save(role.toEntity());
-        return createdBoard.toDto();
+        return boardRepository.save(role.toEntity()).toDto();
     }
 
     @Override
@@ -54,6 +56,17 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public boolean existsById(String id) {
         return boardRepository.existsById(id);
+    }
+
+    @Override
+    public List<BoardDto> findMain() {
+        return boardRepository.findMain().stream()
+                .map(board -> {
+                    BoardDto dto = board.toDto();
+                    dto.setMenu(menuService.findByBoardId(dto.getId()));
+                    return dto;
+                })
+                .toList();
     }
 
 }

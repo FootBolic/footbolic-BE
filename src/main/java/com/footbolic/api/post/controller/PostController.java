@@ -63,12 +63,7 @@ public class PostController {
     public ResponseEntity<BaseResponse> createPost(
             @RequestBody @Valid PostDto post
     ) {
-        PostDto createdPost = postService.savePost(post);
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("createdPost", createdPost);
-
-        return ResponseEntity.ok(new SuccessResponse(result));
+        return ResponseEntity.ok(new SuccessResponse(Map.of("createdPost", postService.savePost(post))));
     }
 
     @Operation(summary = "게시글 단건 조회", description = "전달 받은 식별번호를 가진 게시글을 조회한다.")
@@ -82,15 +77,8 @@ public class PostController {
     ) {
         PostDto post = postService.findById(id);
 
-        if (post != null) {
-
-            Map<String, Object> result = new HashMap<>();
-            result.put("post", post);
-
-            return ResponseEntity.ok(new SuccessResponse(result));
-        } else {
-            return ResponseEntity.badRequest().body(new ErrorResponse("조회된 게시글이 없습니다."));
-        }
+        if (post != null) return ResponseEntity.ok(new SuccessResponse(Map.of("post", post)));
+        else return ResponseEntity.badRequest().body(new ErrorResponse("조회된 게시글이 없습니다."));
     }
 
     @Operation(summary = "게시글 수정", description = "파라미터로 전달 받은 게시글을 수정한다.")
@@ -117,10 +105,7 @@ public class PostController {
             if (target.getCreateMemberId().equals(memberId) || memberRoleCodes.contains(RoleCode.ROLE_SYS_MNG)) {
                 PostDto updatedPost = postService.savePost(post);
 
-                Map<String, Object> result = new HashMap<>();
-                result.put("updatedPost", updatedPost);
-
-                return ResponseEntity.ok(new SuccessResponse(result));
+                return ResponseEntity.ok(new SuccessResponse(Map.of("updatedPost", updatedPost)));
             } else {
                 return ResponseEntity.badRequest().body(new ErrorResponse("수정할 권한이 없는 게시글입니다."));
             }
@@ -153,15 +138,40 @@ public class PostController {
             if (target.getCreateMemberId().equals(memberId) || memberRoleCodes.contains(RoleCode.ROLE_SYS_MNG)) {
                 postService.deletePost(id);
 
-                Map<String, String> result = new HashMap<>();
-                result.put("id", id);
-
-                return ResponseEntity.ok(new SuccessResponse(result));
+                return ResponseEntity.ok(new SuccessResponse(Map.of("id", id)));
             } else {
                 return ResponseEntity.badRequest().body(new ErrorResponse("수정할 권한이 없는 게시글입니다."));
             }
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("조회된 게시글이 없습니다."));
         }
+    }
+
+    @Operation(summary = "전체 게시판 인기 게시글 목록 조회", description = "전체 게시판 인기 게시글 목록을 limit 만큼 조회")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/public/hot")
+    public SuccessResponse getHotPostList(
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit
+    ) {
+        return new SuccessResponse(Map.of("posts", postService.findHotPosts(limit)));
+    }
+
+    @Operation(summary = "전체 게시판 최신 게시글 목록 조회", description = "전체 게시판 최신 게시글 목록을 limit 만큼 조회")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/public/new")
+    public SuccessResponse getNewPostList(
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit
+    ) {
+        return new SuccessResponse(Map.of("posts", postService.findNewPosts(limit)));
+    }
+
+    @Operation(summary = "게시판 별 최신 게시글 목록 조회", description = "게시판 별 최신 게시글 목록을 limit 만큼 조회")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/public/new/{boardId}")
+    public SuccessResponse getNewPostListByBoard(
+            @PathVariable(name = "boardId") String boardId,
+            @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit
+    ) {
+        return new SuccessResponse(Map.of("posts", postService.findNewPostsByBoard(boardId, limit)));
     }
 }

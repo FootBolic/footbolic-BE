@@ -10,6 +10,8 @@ public interface BannerRepositoryCustom {
 
     List<BannerEntity> findAll(Pageable pageable, String searchTitle, LocalDateTime searchDate);
 
+    List<BannerEntity> findPublic(boolean isMobile);
+
     long count(String searchTitle, LocalDateTime searchDate);
 
 }

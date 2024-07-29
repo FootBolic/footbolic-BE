@@ -43,4 +43,11 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
 
         return query.fetch().size();
     }
+
+    @Override
+    public List<BoardEntity> findMain() {
+        return queryFactory.selectFrom(boardEntity)
+                .where(boardEntity.isMain.isTrue())
+                .fetch();
+    }
 }

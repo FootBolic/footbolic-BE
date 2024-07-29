@@ -77,4 +77,30 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom {
 
         return query.fetch().size();
     }
+
+    @Override
+    public List<PostEntity> findHotPosts(Integer limit) {
+        return queryFactory.selectFrom(postEntity)
+                .where(postEntity.recommendations.size().gt(0))
+                .orderBy(postEntity.recommendations.size().desc())
+                .limit(limit)
+                .fetch();
+    }
+
+    @Override
+    public List<PostEntity> findNewPosts(Integer limit) {
+        return queryFactory.selectFrom(postEntity)
+                .orderBy(postEntity.createdAt.desc())
+                .limit(limit)
+                .fetch();
+    }
+
+    @Override
+    public List<PostEntity> findNewPostsByBoard(String boardId, Integer limit) {
+        return queryFactory.selectFrom(postEntity)
+                .where(postEntity.boardId.eq(boardId))
+                .orderBy(postEntity.createdAt.desc())
+                .limit(limit)
+                .fetch();
+    }
 }

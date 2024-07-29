@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.footbolic.api.board.dto.BoardDto;
 import com.footbolic.api.comment.dto.CommentDto;
 import com.footbolic.api.member.dto.MemberDto;
+import com.footbolic.api.menu.dto.MenuDto;
 import com.footbolic.api.post.entity.PostEntity;
 import com.footbolic.api.recommendation.dto.PostRecommendationDto;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -80,6 +81,8 @@ public class PostDto {
 
     @JsonProperty("isRecommended")
     private boolean isRecommended;
+
+    private MenuDto menu;
 
     public PostEntity toEntity() {
         return PostEntity.builder()

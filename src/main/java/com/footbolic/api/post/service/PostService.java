@@ -20,4 +20,10 @@ public interface PostService {
 
     boolean existsById(String id);
 
+    List<PostDto> findHotPosts(Integer limit);
+
+    List<PostDto> findNewPosts(Integer limit);
+
+    List<PostDto> findNewPostsByBoard(String boardId, Integer limit);
+
 }
