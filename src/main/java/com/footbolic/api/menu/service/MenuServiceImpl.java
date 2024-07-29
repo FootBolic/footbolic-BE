@@ -68,8 +68,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public MenuDto saveMenu(MenuDto menu) {
-        MenuEntity createdMenu = menuRepository.save(menu.toEntity());
-        return createdMenu.toDto();
+        return menuRepository.save(menu.toEntity()).toDto();
     }
 
     @Override
@@ -84,6 +83,11 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public boolean existsById(String id) {
         return menuRepository.existsById(id);
+    }
+
+    @Override
+    public MenuDto findByBoardId(String boardId) {
+        return menuRepository.findByBoardId(boardId).toDto();
     }
 
 }

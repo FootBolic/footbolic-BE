@@ -7,4 +7,6 @@ import java.util.List;
 public interface MenuRepositoryCustom {
 
     List<MenuEntity> findAll();
+
+    MenuEntity findByBoardId(String boardId);
 }

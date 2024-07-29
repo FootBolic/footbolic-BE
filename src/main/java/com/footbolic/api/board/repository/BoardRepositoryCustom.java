@@ -11,4 +11,6 @@ public interface BoardRepositoryCustom {
 
     long count(String searchTitle);
 
+    List<BoardEntity> findMain();
+
 }

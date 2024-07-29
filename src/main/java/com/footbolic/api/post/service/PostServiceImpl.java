@@ -3,6 +3,7 @@ package com.footbolic.api.post.service;
 import com.footbolic.api.annotation.RoleCode;
 import com.footbolic.api.comment.dto.CommentDto;
 import com.footbolic.api.member.service.MemberService;
+import com.footbolic.api.menu.service.MenuService;
 import com.footbolic.api.post.dto.PostDto;
 import com.footbolic.api.post.entity.PostEntity;
 import com.footbolic.api.post.repository.PostRepository;
@@ -26,6 +27,8 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     private final MemberService memberService;
+
+    private final MenuService menuService;
 
     @Override
     public List<PostDto> findAll(String boardId, Pageable pageable, String searchTitle , String searchCreatedBy, LocalDateTime searchCreatedAt) {
@@ -90,6 +93,42 @@ public class PostServiceImpl implements PostService {
     @Override
     public boolean existsById(String id) {
         return postRepository.existsById(id);
+    }
+
+    @Override
+    public List<PostDto> findHotPosts(Integer limit) {
+        return postRepository.findHotPosts(limit).stream()
+                .map(post -> {
+                    PostDto dto = post.toDto();
+                    dto.setMenu(menuService.findByBoardId(dto.getBoardId()));
+                    dto.setCreatedBy(memberService.findById(dto.getCreateMemberId()).toPublicDto());
+                    return dto;
+                })
+                .toList();
+    }
+
+    @Override
+    public List<PostDto> findNewPosts(Integer limit) {
+        return postRepository.findNewPosts(limit).stream()
+                .map(post -> {
+                    PostDto dto = post.toDto();
+                    dto.setMenu(menuService.findByBoardId(dto.getBoardId()));
+                    dto.setCreatedBy(memberService.findById(dto.getCreateMemberId()).toPublicDto());
+                    return dto;
+                })
+                .toList();
+    }
+
+    @Override
+    public List<PostDto> findNewPostsByBoard(String boardId, Integer limit) {
+        return postRepository.findNewPostsByBoard(boardId, limit).stream()
+                .map(post -> {
+                    PostDto dto = post.toDto();
+                    dto.setMenu(menuService.findByBoardId(dto.getBoardId()));
+                    dto.setCreatedBy(memberService.findById(dto.getCreateMemberId()).toPublicDto());
+                    return dto;
+                })
+                .toList();
     }
 
 }

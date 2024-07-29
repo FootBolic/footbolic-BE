@@ -24,4 +24,19 @@ public class MenuRepositoryCustomImpl implements MenuRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public MenuEntity findByBoardId(String boardId) {
+        return queryFactory.selectFrom(menuEntity)
+                .where(
+                        menuEntity.isUsed.isTrue()
+                        .and(
+                                menuEntity.program.code.eq("PROGRAM_BOARD")
+                        )
+                        .and(
+                                menuEntity.detailId.eq(boardId)
+                        )
+                )
+                .fetchFirst();
+    }
+
 }

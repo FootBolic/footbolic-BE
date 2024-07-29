@@ -111,12 +111,7 @@ public class BoardController {
         if (board.getId() == null || board.getId().isBlank()) {
             return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 게시판 정보입니다."));
         } else if (boardService.existsById(board.getId())) {
-            BoardDto updatedBoard = boardService.saveBoard(board);
-
-            Map<String, Object> result = new HashMap<>();
-            result.put("updatedBoard", updatedBoard);
-
-            return ResponseEntity.ok(new SuccessResponse(result));
+            return ResponseEntity.ok(new SuccessResponse(Map.of("updatedBoard", boardService.saveBoard(board))));
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("조회된 게시판이 없습니다."));
         }
@@ -135,13 +130,17 @@ public class BoardController {
             return ResponseEntity.badRequest().body(new ErrorResponse("유효하지 않은 게시판 식별번호입니다."));
         } else if (boardService.existsById(id)) {
             boardService.deleteBoard(id);
-
-            Map<String, String> result = new HashMap<>();
-            result.put("id", id);
-
-            return ResponseEntity.ok(new SuccessResponse(result));
+            return ResponseEntity.ok(new SuccessResponse(Map.of("id", id)));
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("조회된 게시판이 없습니다."));
         }
+    }
+
+
+    @Operation(summary = "메인 페이지에 노출되는 게시판 목록 조회", description = "메인 페이지에 노출되는 게시판 목록 조회")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/public/main")
+    public SuccessResponse getMainBoardList() {
+        return new SuccessResponse(Map.of("boards", boardService.findMain()));
     }
 }

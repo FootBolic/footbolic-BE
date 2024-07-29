@@ -21,4 +21,6 @@ public interface BoardService {
 
     boolean existsById(String id);
 
+    List<BoardDto> findMain();
+
 }

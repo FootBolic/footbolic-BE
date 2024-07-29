@@ -45,6 +45,10 @@ public class BoardEntity extends ExtendedBaseEntity {
     @Column(name = "is_used", columnDefinition = "TINYINT(1)", nullable = false)
     private boolean isUsed;
 
+    @ColumnDefault("false")
+    @Column(name = "is_main", columnDefinition = "TINYINT(1)", nullable = false)
+    private boolean isMain;
+
     @Builder.Default
     @Transient
     private List<PostEntity> posts = new ArrayList<>();
