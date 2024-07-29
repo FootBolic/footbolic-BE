@@ -3,6 +3,7 @@ package com.footbolic.api.board.service;
 import com.footbolic.api.board.entity.BoardEntity;
 import com.footbolic.api.board.dto.BoardDto;
 import com.footbolic.api.board.repository.BoardRepository;
+import com.footbolic.api.menu.dto.MenuDto;
 import com.footbolic.api.menu.service.MenuService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -63,9 +65,15 @@ public class BoardServiceImpl implements BoardService {
         return boardRepository.findMain().stream()
                 .map(board -> {
                     BoardDto dto = board.toDto();
-                    dto.setMenu(menuService.findByBoardId(dto.getId()));
-                    return dto;
+                    MenuDto menu = menuService.findByBoardId(dto.getId());
+                    if (menu == null) {
+                        return null;
+                    } else {
+                        dto.setMenu(menu);
+                        return dto;
+                    }
                 })
+                .filter(Objects::nonNull)
                 .toList();
     }
 

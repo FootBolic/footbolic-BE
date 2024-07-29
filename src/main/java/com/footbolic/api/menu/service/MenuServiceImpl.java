@@ -87,7 +87,8 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public MenuDto findByBoardId(String boardId) {
-        return menuRepository.findByBoardId(boardId).toDto();
+        MenuEntity entity = menuRepository.findByBoardId(boardId);
+        return entity == null ? null : entity.toDto();
     }
 
 }
