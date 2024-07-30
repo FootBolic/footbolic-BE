@@ -62,6 +62,9 @@ public class PostEntity extends ExtendedBaseEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<PostRecommendationEntity> recommendations = new ArrayList<>();
 
+    @Column(name = "thumbnail_file_id", length = 30)
+    private String thumbnailFileId;
+
     public PostDto toDto() {
         boolean isRecommended = false;
 
@@ -87,6 +90,7 @@ public class PostEntity extends ExtendedBaseEntity {
                 .announcementEndsAt(announcementEndsAt)
                 .recommendationsSize(recommendations == null ? 0 : recommendations.size())
                 .isRecommended(isRecommended)
+                .thumbnailFileId(thumbnailFileId)
                 .createdAt(getCreatedAt())
                 .createMemberId(getCreateMemberId())
                 .createdBy(getCreatedBy() == null ? null : getCreatedBy().toDto())

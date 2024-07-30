@@ -77,7 +77,7 @@ public class PostController {
     ) {
         PostDto post = postService.findById(id);
 
-        if (post != null) return ResponseEntity.ok(new SuccessResponse(Map.of("post", post)));
+        if (post != null) return ResponseEntity.ok(new SuccessResponse(Map.of("post", postService.findById(id))));
         else return ResponseEntity.badRequest().body(new ErrorResponse("조회된 게시글이 없습니다."));
     }
 

@@ -2,6 +2,7 @@ package com.footbolic.api.post.service;
 
 import com.footbolic.api.annotation.RoleCode;
 import com.footbolic.api.comment.dto.CommentDto;
+import com.footbolic.api.file.service.FileService;
 import com.footbolic.api.member.service.MemberService;
 import com.footbolic.api.menu.service.MenuService;
 import com.footbolic.api.post.dto.PostDto;
@@ -29,6 +30,8 @@ public class PostServiceImpl implements PostService {
     private final MemberService memberService;
 
     private final MenuService menuService;
+
+    private final FileService fileService;
 
     @Override
     public List<PostDto> findAll(String boardId, Pageable pageable, String searchTitle , String searchCreatedBy, LocalDateTime searchCreatedAt) {
@@ -73,6 +76,10 @@ public class PostServiceImpl implements PostService {
                 return comment;
             }).toList());
             post.setCreatedBy(memberService.findById(post.getCreateMemberId()).toPublicDto());
+
+            if (post.getThumbnailFileId() != null && !post.getThumbnailFileId().isBlank()) {
+                post.setThumbnailFile(fileService.findById(post.getThumbnailFileId()));
+            }
 
             return post;
         } else {

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.footbolic.api.board.dto.BoardDto;
 import com.footbolic.api.comment.dto.CommentDto;
+import com.footbolic.api.file.dto.FileDto;
 import com.footbolic.api.member.dto.MemberDto;
 import com.footbolic.api.menu.dto.MenuDto;
 import com.footbolic.api.post.entity.PostEntity;
@@ -84,6 +85,10 @@ public class PostDto {
 
     private MenuDto menu;
 
+    private String thumbnailFileId;
+
+    private FileDto thumbnailFile;
+
     public PostEntity toEntity() {
         return PostEntity.builder()
                 .id(id)
@@ -94,6 +99,7 @@ public class PostDto {
                 .isAnnouncement(isAnnouncement)
                 .announcementStartsAt(announcementStartsAt)
                 .announcementEndsAt(announcementEndsAt)
+                .thumbnailFileId(thumbnailFileId)
                 .createdAt(createdAt)
                 .createMemberId(createMemberId)
                 .createdBy(createdBy == null ? null : createdBy.toEntity())
