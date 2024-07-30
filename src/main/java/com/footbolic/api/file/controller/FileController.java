@@ -69,7 +69,6 @@ public class FileController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, mediaType.toString())
                 .body(fileService.getFile(file));
-//        return file != null ? fileService.getFile(file) : null;
     }
 
     @Operation(summary = "파일 단건 조회", description = "전달 받은 식별번호를 가진 파일을 조회한다.")
