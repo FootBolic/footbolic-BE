@@ -9,6 +9,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,15 +52,19 @@ public class WebSocketHandler extends TextWebSocketHandler {
         });
     }
 
-    private TextMessage toMap(String sender, String payload) {
-        Map<String, String> map = Map.of("sentFrom", sender, "payload", payload);
+    private TextMessage toMap(String sentFrom, String payload) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sentAt = sdf.format(new Date());
+        Map<String, String> map = Map.of("sentFrom", sentFrom, "payload", payload, "sentAt", sentAt);
         ObjectMapper mapper = new ObjectMapper();
         try {
             return new TextMessage(Objects.requireNonNull(mapper.writeValueAsString(map)));
         } catch (IOException e) {
             return new TextMessage(
-            "\"sentFrom\": \"" + sender + "\","
-                +   "\"payload\": \"" + payload + "\"");
+            "\"sentFrom\": \"" + sentFrom + "\","
+                +   "\"payload\": \"" + payload + "\","
+                +   "\"sentAt\" : \"" + sentAt + "\""
+            );
         }
     }
 
