@@ -1,32 +1,41 @@
 package com.footbolic.api.chat.controller;
 
 import com.footbolic.api.chat.dto.ChatMessageDto;
-import com.footbolic.api.common.entity.SuccessResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 public class ChatController {
 
-    private final SimpMessageSendingOperations template;
-
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/chat")
-    public SuccessResponse getChatMessages(){
-        return new SuccessResponse(null);
+    @MessageMapping("/ws/chat")
+    @SendTo("/sub/chat")
+    public ChatMessageDto receiveMessage(@RequestBody ChatMessageDto chat, SimpMessageHeaderAccessor headerAccessor) {
+       chat.setSentFrom(headerAccessor.getSessionAttributes().get("nickname").toString());
+        return chat;
     }
 
-    @MessageMapping("/message")
-    public ResponseEntity<Void> receiveMessage(@RequestBody ChatMessageDto chat) {
-        template.convertAndSend("/sub/chatroom", chat);
-        return ResponseEntity.ok().build();
+    @MessageMapping("/ws/chat/enter")
+    @SendTo("/sub/chat")
+    public ChatMessageDto onEnter(@RequestBody ChatMessageDto chat, SimpMessageHeaderAccessor headerAccessor) {
+        String nickname = headerAccessor.getSessionAttributes().get("nickname").toString();
+        chat.setSentFrom(nickname);
+        chat.setPayload(nickname + " 님이 입장하셨습니다.");
+        chat.setNotice(true);
+        return chat;
+    }
+    
+    @MessageMapping("/ws/chat/leave")
+    @SendTo("/sub/chat")
+    public ChatMessageDto onLeave(@RequestBody ChatMessageDto chat, SimpMessageHeaderAccessor headerAccessor) {
+        String nickname = headerAccessor.getSessionAttributes().get("nickname").toString();
+        chat.setSentFrom(nickname);
+        chat.setPayload(nickname + " 님이 퇴장하셨습니다.");
+        chat.setNotice(true);
+        return chat;
     }
 }

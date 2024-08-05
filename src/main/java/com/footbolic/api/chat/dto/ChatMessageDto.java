@@ -1,5 +1,6 @@
 package com.footbolic.api.chat.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Getter
@@ -14,5 +15,8 @@ public class ChatMessageDto {
     private String sentAt;
 
     private String payload;
+
+    @JsonProperty("isNotice")
+    private boolean isNotice;
 
 }
