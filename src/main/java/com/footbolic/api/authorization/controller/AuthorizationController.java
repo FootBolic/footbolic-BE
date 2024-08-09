@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -133,5 +134,11 @@ public class AuthorizationController {
         } else {
             return ResponseEntity.badRequest().body(new ErrorResponse("조회된 권한이 없습니다."));
         }
+    }
+
+
+    @GetMapping("/public/time")
+    public LocalDateTime test() {
+        return LocalDateTime.now();
     }
 }
