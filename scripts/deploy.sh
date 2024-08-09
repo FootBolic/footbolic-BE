@@ -24,3 +24,5 @@ echo "> $JAR_NAME 실행"
 cd $REPOSITORY
 
 pm2 start /home/ubuntu/ecosystem.config.js
+
+chmod +x app/healthCheck.sh
