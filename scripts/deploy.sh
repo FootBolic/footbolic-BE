@@ -25,4 +25,4 @@ cd $REPOSITORY
 
 pm2 start /home/ubuntu/ecosystem.config.js
 
-chmod +x app/healthCheck.sh
+chmod +x /home/ubuntu/app/healthCheck.sh
