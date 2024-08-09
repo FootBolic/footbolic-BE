@@ -42,9 +42,13 @@ jobs:
     - name: Copy Jar
       run: cp ./build/libs/*.jar ./deploy
 
+    # plain jar 파일 삭제
+    - name: delete plain jar
+      run: rm -f ./deploy/*plain.jar
+
     # footbolic.jar로 이름 변경
     - name: Rename jar
-      run: mv ./deploy/*SNAPSHOT.jar ./deploy/footbolic.jar
+      run: mv ./deploy/*.jar ./deploy/footbolic.jar
 
     # appspec.yml 파일 복사
     - name: Copy appspec.yml
