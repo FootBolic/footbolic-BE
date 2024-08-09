@@ -20,6 +20,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String memberId) throws UsernameNotFoundException {
         MemberEntity member = memberRepository.findById(memberId).map(MemberEntity::fetchRoles)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
-        return new User(memberId, "",  member.getRoles());
+        return new User(member.getId(), "",  member.getRoles());
     }
 }

@@ -132,6 +132,7 @@ public class JwtUtil {
 
         return MemberDto.builder()
                 .id(claims.get(ID_CLAIM).toString())
+                .nickname(claims.getSubject())
                 .platform(claims.get(PLATFORM_CLAIM).toString())
                 .idAtProvider(claims.get(ID_AT_PROVIDER_CLAIM).toString())
                 .roles(parseRoles(claims.get(AUTH_CLAIM)))
