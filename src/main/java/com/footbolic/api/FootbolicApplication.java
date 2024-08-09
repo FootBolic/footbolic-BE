@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.TimeZone;
+
 @SpringBootApplication
 public class FootbolicApplication {
 
@@ -21,6 +23,7 @@ public class FootbolicApplication {
 	private String DEV_CLIENT_DOMAIN;
 
 	public static void main(String[] args) {
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
 		SpringApplication.run(FootbolicApplication.class, args);
 	}
 
