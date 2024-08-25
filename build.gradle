@@ -36,6 +36,12 @@ dependencies {
 	// Websocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
+	// Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	//mongo
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
 	// spring security
 	implementation("org.springframework.boot:spring-boot-starter-security")
 
