@@ -8,5 +8,5 @@ public interface ChatService {
 
     void insert(ChatMessageDto chatMessage);
 
-    List<ChatMessageDto> getMessages();
+    List<ChatMessageDto> getHistory(String chatroomId, String beforeChatId);
 }

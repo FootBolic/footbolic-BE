@@ -2,21 +2,32 @@ package com.footbolic.api.chat.controller;
 
 import com.footbolic.api.chat.dto.ChatMessageDto;
 import com.footbolic.api.chat.service.ChatService;
+import com.footbolic.api.common.entity.SuccessResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 public class ChatController {
 
     private final ChatService chatService;
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/chat/history/{chatroomId}")
+    public SuccessResponse getCacheableHistory(
+            @RequestParam(name = "beforeChatId", required = false) String beforeChatId,
+            @PathVariable(name = "chatroomId") String chatroomId
+    ) {
+        return new SuccessResponse(Map.of("messages", chatService.getHistory(chatroomId, beforeChatId)));
+    }
 
     @MessageMapping("/ws/chat/{chatroomId}")
     @SendTo("/sub/chat/{chatroomId}")

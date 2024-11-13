@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 
-@Document(collation = "chat_message")
+@Document(collation = "{ locale: 'en', strength: 1 }")
 @Builder
 public class ChatMessageDocument {
 
