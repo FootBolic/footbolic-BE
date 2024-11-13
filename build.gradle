@@ -28,13 +28,20 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-	compileOnly 'org.projectlombok:lombok'
+    implementation 'org.testng:testng:7.1.0'
+    compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	// Websocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	// Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	//mongo
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
 	// spring security
 	implementation("org.springframework.boot:spring-boot-starter-security")
